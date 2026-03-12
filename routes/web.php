@@ -1,28 +1,32 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthController;
+
+use App\Http\Controllers\CatalogoController;
+
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\CarritoController;
 
 // Ruta principal
-Route::get('/', function () {
-    return view('cliente.home');
-})->name('home');
+Route::get('/', [CatalogoController::class, 'home'])->name('home');
 
 // Catálogo
-Route::get('/catalogo', function () {
-    return view('cliente.catalogo');
-})->name('catalogo');
+Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo');
 
-// Carrito
-Route::get('/carrito', function () {
-    return view('cliente.carrito');
-})->name('carrito');
+// Detalle de Producto
+Route::get('/producto/{id}', [ProductoController::class, 'show'])->name('producto.show');
+
+// Carrito de Compras
+Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
+Route::post('/carrito/add', [CarritoController::class, 'add'])->name('carrito.add');
+Route::post('/carrito/remove', [CarritoController::class, 'remove'])->name('carrito.remove');
 
 // Login
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+Route::get('/login', [AuthController::class, 'Formulario'])->name('login');
+Route::post('/login', [AuthController::class, 'Login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
 
 // Registro
-Route::get('/registro', function () {
-    return view('auth.registro');
-})->name('registro');
+Route::get('/registro', [AuthController::class, 'Registro'])->name('registro');
+Route::post('/registro', [AuthController::class, 'Register'])->name('register.post');
