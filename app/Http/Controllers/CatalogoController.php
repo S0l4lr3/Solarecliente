@@ -22,19 +22,18 @@ class CatalogoController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Capturamos el filtro de red
-        $tipo = $request->query('tipo', 'TODOS');
+        // 1. Capturamos los filtros de la URL
+        $search = $request->query('search');
+        $categoria_id = $request->query('categoria_id');
 
-        // 2. Petición al Nodo Central enviando el filtro
+        // 2. Petición al Backend con los filtros
         $response = Http::get('https://solare-backend-production.up.railway.app/api/productos', [
-            'tipo' => $tipo
+            'search' => $search,
+            'categoria_id' => $categoria_id
         ]);
 
-        if ($response->successful()) {
-            $muebles = $response->json();
-            return view('cliente.catalogo', compact('muebles', 'tipo'));
-        }
+        $muebles = $response->successful() ? $response->json() : [];
 
-        return view('cliente.catalogo', ['muebles' => [], 'tipo' => $tipo]);
+        return view('cliente.catalogo', compact('muebles', 'search', 'categoria_id'));
     }
 }
