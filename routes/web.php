@@ -30,3 +30,6 @@ Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
 // Registro
 Route::get('/registro', [AuthController::class, 'Registro'])->name('registro');
 Route::post('/registro', [AuthController::class, 'Register'])->name('register.post');
+
+// Aviso de Privacidad
+Route::view('/aviso-privacidad', 'aviso-privacidad')->name('aviso.privacidad');

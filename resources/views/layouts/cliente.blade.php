@@ -242,6 +242,7 @@
                     <ul style="list-style: none; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; line-height: 2.5;">
                         <li><a href="/catalogo" style="color: white; opacity: 0.6; text-decoration: none;">Ver Catálogo</a></li>
                         <li><a href="/registro" style="color: white; opacity: 0.6; text-decoration: none;">Nueva Cuenta</a></li>
+                        <li><a href="{{ route('aviso.privacidad') }}" style="color: white; opacity: 0.6; text-decoration: none;">Aviso de Privacidad</a></li>
                     </ul>
                 </div>
                 <div>

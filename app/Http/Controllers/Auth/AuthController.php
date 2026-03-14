@@ -35,7 +35,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $response = Http::post('http://127.0.0.1:8000/api/login', [
+        $response = Http::post('https://solare-backend-production.up.railway.app/api/login', [
             'correo' => $request->email,
             'contrasena' => $request->password,
         ]);
@@ -58,7 +58,7 @@ class AuthController extends Controller
     public function Register(Request $request)
     {
         // 1. Handshake con el Backend para crear el usuario
-        $response = Http::post('http://127.0.0.1:8000/api/registro', [
+        $response = Http::post('https://solare-backend-production.up.railway.app/api/registro', [
             'nombre' => $request->nombre,
             'apellido_paterno' => $request->apellido,
             'correo' => $request->email,
@@ -81,7 +81,7 @@ class AuthController extends Controller
     {
         $token = session('cliente_token');
         if ($token) {
-            Http::withToken($token)->post('http://127.0.0.1:8000/api/logout');
+            Http::withToken($token)->post('https://solare-backend-production.up.railway.app/api/logout');
         }
 
         Session::forget(['cliente_token', 'cliente_data', 'cart']);

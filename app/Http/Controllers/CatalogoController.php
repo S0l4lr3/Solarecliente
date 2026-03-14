@@ -12,7 +12,7 @@ class CatalogoController extends Controller
      */
     public function home()
     {
-        $response = Http::get('http://127.0.0.1:8000/api/productos');
+        $response = Http::get('https://solare-backend-production.up.railway.app/api/productos');
         $muebles = $response->successful() ? array_slice($response->json(), 0, 4) : [];
         return view('cliente.home', compact('muebles'));
     }
@@ -26,7 +26,7 @@ class CatalogoController extends Controller
         $tipo = $request->query('tipo', 'TODOS');
 
         // 2. Petición al Nodo Central enviando el filtro
-        $response = Http::get('http://127.0.0.1:8000/api/productos', [
+        $response = Http::get('https://solare-backend-production.up.railway.app/api/productos', [
             'tipo' => $tipo
         ]);
 
