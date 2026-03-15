@@ -20,7 +20,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #ffffff;
@@ -28,26 +28,26 @@
         }
 
         .serif { font-family: 'Playfair Display', serif; }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
-        
+
         /* Header Corporativo */
         .header {
             background-color: #ffffff;
             padding: 1.5rem 0;
             border-bottom: 1px solid var(--color-sand-beige);
         }
-        
+
         .nav-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
@@ -55,13 +55,13 @@
             text-decoration: none;
             letter-spacing: 6px;
         }
-        
+
         .nav-menu {
             display: flex;
             gap: 3rem;
             align-items: center;
         }
-        
+
         .nav-link {
             color: var(--color-dark-moss);
             text-decoration: none;
@@ -71,11 +71,11 @@
             letter-spacing: 2px;
             transition: color 0.3s;
         }
-        
+
         .nav-link:hover {
             color: var(--color-clay-brown);
         }
-        
+
         .btn {
             padding: 14px 30px;
             cursor: pointer;
@@ -87,16 +87,16 @@
             font-size: 12px;
             transition: all 0.3s;
         }
-        
+
         .btn-primary {
             background-color: var(--color-clay-brown);
             color: #ffffff;
         }
-        
+
         .btn-primary:hover {
             background-color: var(--color-dark-moss);
         }
-        
+
         /* Footer Solare */
         .footer {
             background-color: var(--color-dark-moss);
@@ -104,7 +104,7 @@
             padding: 4rem 0;
             margin-top: 6rem;
         }
-        
+
         /* Cards de Muebles */
         .product-grid {
             display: grid;
@@ -112,16 +112,16 @@
             gap: 2.5rem;
             margin: 2rem 0;
         }
-        
+
         .product-card {
             background: #ffffff;
             transition: all 0.4s ease;
         }
-        
+
         .product-card:hover {
             transform: translateY(-8px);
         }
-        
+
         .product-img {
             width: 100%;
             height: 350px;
@@ -130,19 +130,19 @@
             background-color: var(--color-sand-beige);
             display: block;
         }
-        
+
         .product-body {
             padding: 1.5rem 0;
             text-align: center;
         }
-        
+
         .product-title {
             font-family: 'Playfair Display', serif;
             color: #000000;
             font-size: 1.2rem;
             margin-bottom: 0.4rem;
         }
-        
+
         .product-collection {
             color: var(--color-clay-brown);
             font-size: 9px;
@@ -151,17 +151,17 @@
             letter-spacing: 2px;
             margin-bottom: 0.6rem;
         }
-        
+
         .product-price {
             color: #333333;
             font-size: 1rem;
             font-weight: 600;
         }
-        
+
         .filter-section {
             margin-bottom: 3rem;
         }
-        
+
         .filter-title {
             font-family: 'Playfair Display', serif;
             font-size: 14px;
@@ -171,15 +171,15 @@
             border-bottom: 1px solid var(--color-sand-beige);
             padding-bottom: 0.5rem;
         }
-        
+
         .filter-list {
             list-style: none;
         }
-        
+
         .filter-list li {
             margin-bottom: 0.8rem;
         }
-        
+
         .filter-list a {
             color: #888;
             text-decoration: none;
@@ -189,7 +189,7 @@
             letter-spacing: 1px;
             transition: color 0.3s;
         }
-        
+
         .filter-list a:hover {
             color: var(--color-clay-brown);
         }
@@ -201,7 +201,8 @@
             <a href="/" class="logo serif" style="letter-spacing: 4px; font-weight: 400;">SOLARE</a>
             <nav class="nav-menu">
                 <a href="/" class="nav-link">Inicio</a>
-                <a href="{{ route('catalogo') }}" class="nav-link">Colecciones</a>
+                {{-- eto tambien alv  --}}
+                {{-- <a href="/catalogo" class="nav-link">Colecciones</a> --}}
                 <a href="/carrito" class="nav-link" style="position: relative; display: flex; align-items: center; padding: 10px;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 48px; height: 48px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
@@ -240,21 +241,22 @@
                 <div>
                     <h4 class="serif" style="margin-bottom: 1.5rem; font-size: 14px;">Explorar</h4>
                     <ul style="list-style: none; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; line-height: 2.5;">
-                        <li><a href="/catalogo" style="color: white; opacity: 0.6; text-decoration: none;">Ver Catálogo</a></li>
-                        <li><a href="/registro" style="color: white; opacity: 0.6; text-decoration: none;">Nueva Cuenta</a></li>
+                        {{-- <li><a href="/catalogo" style="color: white; opacity: 0.6; text-decoration: none;">Ver Catálogo</a></li>
+                        <li><a href="/registro" style="color: white; opacity: 0.6; text-decoration: none;">Nueva Cuenta</a></li> --}}
                         <li><a href="{{ route('aviso.privacidad') }}" style="color: white; opacity: 0.6; text-decoration: none;">Aviso de Privacidad</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="serif" style="margin-bottom: 1.5rem; font-size: 14px;">Contacto</h4>
-                    <p style="font-size: 11px; opacity: 0.6; margin-bottom: 10px;">hola@solaremuebles.mx</p>
-                    <p style="font-size: 11px; opacity: 0.6;">Mérida, Yucatán, México</p>
-                </div>
+
             </div>
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4rem; padding-top: 2rem; text-align: center; font-size: 10px; opacity: 0.4; letter-spacing: 2px; text-transform: uppercase;">
-                © 2026 SOLARE — MUEBLES DE EXTERIOR
+            <div>
+                <h4 class="serif" style="margin-bottom: 0.8rem; font-size: 12px;">Contacto</h4>
+                <p style="font-size: 10px; opacity: 0.6; margin-bottom: 5px;">aclariciones@solaremuebles.mx</p>
+                <p style="font-size: 10px; opacity: 0.6;">Tlajomulco, México</p>
             </div>
         </div>
-    </footer>
-</body>
-</html>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 2rem; padding-top: 1rem; text-align: center; font-size: 9px; opacity: 0.4; letter-spacing: 2px; text-transform: uppercase;">
+            © 2026 SOLARE — MUEBLES DE EXTERIOR
+        </div>
+    </div>
+</footer>

@@ -11,6 +11,7 @@ use App\Http\Controllers\CarritoController;
 // Ruta principal
 Route::get('/', [CatalogoController::class, 'home'])->name('home');
 
+
 // Catálogo
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo');
 
