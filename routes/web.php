@@ -2,11 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
-
 use App\Http\Controllers\CatalogoController;
-
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoController;
+
 
 // Ruta principal
 Route::get('/', [CatalogoController::class, 'home'])->name('home');

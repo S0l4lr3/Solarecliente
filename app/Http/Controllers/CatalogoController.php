@@ -22,25 +22,24 @@ class CatalogoController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. Capturamos el ID de la categoría seleccionado (por defecto 'TODOS')
-        $categoria_id = $request->query('categoria_id', 'TODOS');
+        // 1. Capturamos los filtros de la URL
+        $params = [
+            'search' => $request->query('search'),
+            'categoria_id' => $request->query('categoria_id')
+        ];
 
-        // 2. Preparamos los parámetros para la API de productos
-        // Si es 'TODOS', no enviamos el filtro para que traiga el catálogo completo
-        $params = [];
-        if ($categoria_id !== 'TODOS') {
-            $params['categoria_id'] = $categoria_id;
-        }
+        // 2. Petición al Backend con los filtros (USANDO LA URL DE RAILWAY)
+        $responseProductos = Http::get('https://solare-backend-production.up.railway.app/api/productos', $params);
+        $responseCategorias = Http::get('https://solare-backend-production.up.railway.app/api/categorias');
 
-        // 3. Hacemos las peticiones a tu API (Backend)
-        $responseProductos = Http::get('http://127.0.0.1:8000/api/productos', $params);
-        $responseCategorias = Http::get('http://127.0.0.1:8000/api/categorias');
-
-        // 4. Convertimos la respuesta en arrays
         $muebles = $responseProductos->successful() ? $responseProductos->json() : [];
         $categorias = $responseCategorias->successful() ? $responseCategorias->json() : [];
 
-        // 5. Enviamos todo a la vista
-        return view('cliente.catalogo', compact('muebles', 'categorias', 'categoria_id'));
+        return view('cliente.catalogo', [
+            'muebles' => $muebles,
+            'categorias' => $categorias,
+            'search' => $params['search'],
+            'categoria_id' => $params['categoria_id']
+        ]);
     }
 }
