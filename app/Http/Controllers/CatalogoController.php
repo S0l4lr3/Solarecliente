@@ -18,28 +18,34 @@ class CatalogoController extends Controller
     }
 
     /**
-     * Muestra el catálogo de muebles de exterior para los clientes.
+     * Muestra el catálogo de muebles con filtros funcionales y URL de Railway.
      */
     public function index(Request $request)
     {
-        // 1. Capturamos los filtros de la URL
-        $params = [
-            'search' => $request->query('search'),
-            'categoria_id' => $request->query('categoria_id')
-        ];
+        // 1. Capturamos los valores de la URL
+        $search = $request->query('search');
+        $categoria_id = $request->query('categoria_id', 'TODOS');
 
-        // 2. Petición al Backend con los filtros (USANDO LA URL DE RAILWAY)
+        // 2. Preparamos los parámetros para la API del Backend
+        $params = [];
+        
+        if ($search) {
+            $params['search'] = $search;
+        }
+
+        // Si es 'TODOS', no enviamos el filtro para que el backend traiga todo
+        if ($categoria_id !== 'TODOS' && $categoria_id !== null) {
+            $params['categoria_id'] = $categoria_id;
+        }
+
+        // 3. Petición al Backend en Railway
         $responseProductos = Http::get('https://solare-backend-production.up.railway.app/api/productos', $params);
         $responseCategorias = Http::get('https://solare-backend-production.up.railway.app/api/categorias');
 
         $muebles = $responseProductos->successful() ? $responseProductos->json() : [];
         $categorias = $responseCategorias->successful() ? $responseCategorias->json() : [];
 
-        return view('cliente.catalogo', [
-            'muebles' => $muebles,
-            'categorias' => $categorias,
-            'search' => $params['search'],
-            'categoria_id' => $params['categoria_id']
-        ]);
+        // 4. Enviamos a la vista con todas las variables necesarias
+        return view('cliente.catalogo', compact('muebles', 'categorias', 'categoria_id', 'search'));
     }
 }
