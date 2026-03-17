@@ -28,22 +28,30 @@ class CarritoController extends Controller
 
  public function realizarCompra(Request $request)
 {
-    // Verificar si el usuario está autenticado (registrado)
-    if (!auth()->check()) {
-        // Usuario no está registrado - redirigir al login con mensaje
+// 1. Cambiamos auth()->check() por la verificación de tu sesión personalizada
+    if (!session()->has('cliente_token')) {
+        // Guardamos la intención de compra para redirigir después del login (opcional)
+        session(['url.intended' => url()->current()]);
+        
         return redirect()->route('login')
             ->with('error', 'Debes iniciar sesión o registrarte para realizar una compra.');
     }
     
-    //Si tiene cuenta continua normal 
+    // Si tiene sesión activa, recuperamos el carrito
     $cart = session()->get('cart', []);
 
-    // Obtener el método de entrega del formulario o de la sesión
+    // Validar que el carrito no esté vacío antes de ir a pago
+    if (empty($cart)) {
+        return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
+    }
+
+    // Obtener el método de entrega
     $metodo_entrega = $request->metodo_entrega ?? session()->get('metodo_entrega', 'pickup');
     
-    // Guardar el método de entrega en sesión
+    // Guardar en sesión para persistencia
     session()->put('metodo_entrega', $metodo_entrega);
     
+    // Realizar cálculos
     $calculos = $this->calcularTotales($cart, $metodo_entrega);
     
     return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
