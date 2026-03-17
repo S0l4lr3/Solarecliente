@@ -113,11 +113,11 @@ class CarritoController extends Controller
     public function procesarPedido(Request $request)
     {
             // Verificar si el usuario está autenticado (registrado)
-    if (!auth()->check()) {
+    if (response()->json(['error' => 'Debes iniciar sesión o registrarte para realizar una compra.'])) {
         // Usuario no está registrado - redirigir al login con mensaje
         return redirect()->route('login')
             ->with('error', 'Debes iniciar sesión o registrarte para realizar una compra.');
-    }
+    }else{
         $cart = session()->get('cart', []);
         
         if (empty($cart)) {
@@ -134,6 +134,7 @@ class CarritoController extends Controller
 
         return redirect()->route('catalogo')->with('success', '¡Pedido realizado con éxito! Pronto te contactaremos para confirmar.');
     }
+}
 
     /**
      * Calcula todos los totales basado en el método de entrega
