@@ -8,7 +8,7 @@ use App\Http\Controllers\CarritoController;
 
 
 // Ruta principal
-Route::get('/', [CatalogoController::class, 'home'])->name('home');
+Route::get('/', [CatalogoController::class, 'home'  ])->name('home');
 
 
 // Catálogo
@@ -19,8 +19,11 @@ Route::get('/producto/{id}', [ProductoController::class, 'show'])->name('product
 
 // Carrito de Compras
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
+Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
 Route::post('/carrito/add', [CarritoController::class, 'add'])->name('carrito.add');
 Route::post('/carrito/remove', [CarritoController::class, 'remove'])->name('carrito.remove');
+Route::post('/carrito/update-metodo-entrega', [CarritoController::class, 'updateMetodoEntrega'])->name('carrito.update-metodo-entrega');
+Route::post('/carrito/procesar', [CarritoController::class, 'procesarPedido'])->name('carrito.procesar');
 
 // Login
 Route::get('/login', [AuthController::class, 'Formulario'])->name('login');
