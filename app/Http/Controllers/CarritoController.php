@@ -25,6 +25,30 @@ class CarritoController extends Controller
         return view('cliente.carrito', compact('cart', 'calculos', 'metodo_entrega'));
     }
 
+
+ public function realizarCompra(Request $request)
+{
+    // Verificar si el usuario está autenticado (registrado)
+    if (!auth()->check()) {
+        // Usuario no está registrado - redirigir al login con mensaje
+        return redirect()->route('login')
+            ->with('error', 'Debes iniciar sesión o registrarte para realizar una compra.');
+    }
+    
+    //Si tiene cuenta continua normal 
+    $cart = session()->get('cart', []);
+
+    // Obtener el método de entrega del formulario o de la sesión
+    $metodo_entrega = $request->metodo_entrega ?? session()->get('metodo_entrega', 'pickup');
+    
+    // Guardar el método de entrega en sesión
+    session()->put('metodo_entrega', $metodo_entrega);
+    
+    $calculos = $this->calcularTotales($cart, $metodo_entrega);
+    
+    return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
+}
+
     /**
      * Añade un mueble al carrito local.
      */
@@ -88,6 +112,12 @@ class CarritoController extends Controller
      */
     public function procesarPedido(Request $request)
     {
+            // Verificar si el usuario está autenticado (registrado)
+    if (!auth()->check()) {
+        // Usuario no está registrado - redirigir al login con mensaje
+        return redirect()->route('login')
+            ->with('error', 'Debes iniciar sesión o registrarte para realizar una compra.');
+    }
         $cart = session()->get('cart', []);
         
         if (empty($cart)) {
@@ -97,14 +127,6 @@ class CarritoController extends Controller
         $metodo_entrega = session()->get('metodo_entrega', 'pickup');
         $calculos = $this->calcularTotales($cart, $metodo_entrega);
 
-        // base de datos 
-        session()->put('pedido_pendiente', [
-            'cart' => $cart,
-            'calculos' => $calculos,
-            'metodo_entrega' => $metodo_entrega,
-            'fecha' => now(),
-            'estado' => 'pendiente_pago'
-        ]);
 
         // Limpiar el carrito después de finalizar 
         session()->forget('cart');
@@ -160,4 +182,6 @@ class CarritoController extends Controller
         }
         return $subtotal;
     }
+
+
 }

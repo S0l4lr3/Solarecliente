@@ -100,7 +100,9 @@
                     @csrf
                     <input type="hidden" name="metodo_entrega" id="metodoEntregaInput" value="{{ $metodo_entrega }}">
                     <button type="submit" class="btn btn-primary" style="width: 100%; padding: 20px; font-size: 11px; letter-spacing: 2px;">
+                        
                         FINALIZAR PEDIDO
+
                     </button>
                 </form>
                 
