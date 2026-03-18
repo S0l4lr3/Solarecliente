@@ -8,7 +8,7 @@ use App\Http\Controllers\CarritoController;
 
 
 // Ruta principal
-Route::get('/', [CatalogoController::class, 'home'  ])->name('home');
+Route::get('/', [CatalogoController::class, 'home'])->name('home');
 
 
 // Catálogo
@@ -18,7 +18,6 @@ Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo');
 Route::get('/producto/{id}', [ProductoController::class, 'show'])->name('producto.show');
 
 // Carrito de Compras
-Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
 Route::post('/carrito/add', [CarritoController::class, 'add'])->name('carrito.add');
 Route::post('/carrito/remove', [CarritoController::class, 'remove'])->name('carrito.remove');
@@ -37,3 +36,20 @@ Route::post('/registro', [AuthController::class, 'Register'])->name('register.po
 
 // Aviso de Privacidad
 Route::view('/aviso-privacidad', 'aviso-privacidad')->name('aviso.privacidad');
+
+// Check out
+Route::get('/checkout/envio', function () {
+    return view('cliente.formulario_envio');
+})->name('cliente.envio');
+
+Route::get('/checkout/pago', function () {
+    return view('cliente.formulario_pago');
+})->name('cliente.pago');
+
+Route::post('/checkout/pedido-realizado', function () {
+    return redirect()->route('cliente.pedido.realizado');
+})->name('cliente.pedido.realizado');
+
+Route::get('/checkout/pedido-realizado', function () {
+    return view('cliente.pedido_realizado');
+})->name('cliente.pedido.realizado');
