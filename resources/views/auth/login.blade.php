@@ -49,17 +49,33 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <p class="text-[10px] uppercase tracking-widest font-bold text-red-500">
+                    {{ session('error') }}
+                </p>
+            </div>
+        @endif
+
+        @if(session('success'))
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                <p class="text-[10px] uppercase tracking-widest font-bold text-green-500">
+                    {{ session('success') }}
+                </p>
+            </div>
+        @endif
+
         <form action="{{ route('login.post') }}" method="POST" class="space-y-6">
             @csrf
             <div>
                 <label class="block text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-2">Correo electrónico</label>
-                <input type="email" name="email" value="{{ old('email') }}" required
+                <input type="email" name="correo" value="{{ old('correo') }}" required
                     class="w-full bg-gray-50 border-b-2 border-gray-200 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" 
                     placeholder="cliente@solare.mx">
             </div>
             <div>
                 <label class="block text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-2">Contraseña</label>
-                <input type="password" name="password" required
+                <input type="password" name="contrasena" required
                     class="w-full bg-gray-50 border-b-2 border-gray-200 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" 
                     placeholder="••••••••">
             </div>

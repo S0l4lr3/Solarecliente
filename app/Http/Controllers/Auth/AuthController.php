@@ -10,61 +10,50 @@ use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
-    /**
-     * Mostrar el formulario de Login
-     */
+    protected $apiUrl = 'https://solare-backend-production.up.railway.app/api';
+
     public function Formulario()
     {
         return view('auth.login');
     }
 
-    /**
-     * Procesar el Inicio de Sesión (Login)
-     */
     public function Login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'correo' => 'required|email',
+            'contrasena' => 'required',
         ]);
 
-        // Petición al Backend de Railway
-        $response = Http::post('https://solare-backend-production.up.railway.app/api/login', [
-            'email' => $request->email,
-            'password' => $request->password,
+        $response = Http::post("{$this->apiUrl}/login", [
+            'correo' => $request->correo,
+            'contrasena' => $request->contrasena,
         ]);
 
         if ($response->successful()) {
             $data = $response->json();
-            
-            // Guardar token y datos en sesión
-            Session::put('token', $data['access_token'] ?? $data['token'] ?? '');
-            Session::put('user', $data['user']);
-
+            Session::put('token', $data['data']['token'] ?? '');
+            Session::put('user', $data['data']['user'] ?? []);
             return redirect()->route('catalogo')->with('success', 'Bienvenido de nuevo.');
         }
 
-        return back()->with('error', 'Credenciales incorrectas o error en el servidor.');
+        $mensaje = $response->json()['mensaje'] ?? 'Credenciales incorrectas.';
+        return back()->with('error', $mensaje);
     }
 
-    /**
-     * Mostrar el formulario de Registro
-     */
     public function Registro()
     {
         return view('auth.registro');
     }
 
-    /**
-     * Procesar el Registro con VALIDACIÓN MEJORADA
-     */
     public function Register(Request $request)
     {
-        // VALIDACIÓN RIGUROSA (Mayúscula, Minúscula, Número, Especial)
+        // VALIDACIÓN CON TUS NOMBRES DE COLUMNA REALES
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255',
-            'password' => [
+            'nombre' => 'required|string|max:100',
+            'apellido_paterno' => 'required|string|max:100',
+            'apellido_materno' => 'nullable|string|max:100',
+            'correo' => 'required|string|email|max:100',
+            'contrasena' => [
                 'required',
                 'confirmed',
                 Password::min(8)
@@ -75,33 +64,30 @@ class AuthController extends Controller
             ],
         ]);
 
-        // Petición al Backend de Railway
-        $response = Http::post('https://solare-backend-production.up.railway.app/api/register', [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-            'password_confirmation' => $request->password_confirmation,
+        // Petición al Backend enviando exactamente lo que pide el modelo Usuario
+        $response = Http::post("{$this->apiUrl}/register", [
+            'nombre' => $request->nombre,
+            'apellido_paterno' => $request->apellido_paterno,
+            'apellido_materno' => $request->apellido_materno,
+            'correo' => $request->correo,
+            'contrasena' => $request->contrasena,
+            'rol_id' => 3, // Forzamos el ID de Cliente según tu tabla de roles
         ]);
 
         if ($response->successful()) {
             return redirect()->route('login')->with('success', 'Cuenta creada exitosamente. Ya puedes iniciar sesión.');
         }
 
-        $errorMessage = $response->json()['message'] ?? 'Error al registrar. Reintente más tarde.';
-        return back()->with('error', $errorMessage);
+        $mensaje = $response->json()['mensaje'] ?? 'Error al registrar.';
+        return back()->with('error', $mensaje);
     }
 
-    /**
-     * Procesar el Cierre de Sesión (Logout)
-     */
     public function Logout()
     {
         $token = Session::get('token');
-
         if ($token) {
-            Http::withToken($token)->post('https://solare-backend-production.up.railway.app/api/logout');
+            Http::withToken($token)->post("{$this->apiUrl}/logout");
         }
-
         Session::forget(['token', 'user']);
         return redirect()->route('login')->with('success', 'Sesión cerrada.');
     }

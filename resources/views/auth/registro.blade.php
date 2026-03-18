@@ -4,24 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOLARE | Regístrate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #edebe8; margin: 0; }
-        .serif { font-family: 'Playfair Display', serif; }
-        .text-solare-arcilla { color: #958174; }
+        .serif { font-family: "Crimson Pro", serif; }
+        body { font-family: "Inter", sans-serif; }
         .bg-solare-musgo { background-color: #50594e; }
+        .text-solare-arcilla { color: #958174; }
         .bg-solare-arcilla { background-color: #958174; }
-        .border-solare-arcilla { border-color: #958174; }
+        .hover\:bg-solare-musgo:hover { background-color: #50594e; }
     </style>
 </head>
-<body class="antialiased">
+<body class="bg-[#f3f1ef]">
 
-<div class="flex min-h-screen flex-col lg:flex-row">
-    {{-- Formulario Principal --}}
-    <div class="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div class="w-full max-w-[550px] bg-white p-10 shadow-sm border border-gray-100">
-            
+<div class="flex min-h-screen">
+    {{-- Formulario Central --}}
+    <div class="flex-1 flex items-center justify-center p-6 lg:p-24 bg-white shadow-2xl relative z-10">
+        <div class="max-w-[420px] w-full">
             <div class="text-center mb-10">
                 <a href="/" style="text-decoration: none; color: inherit;">
                     <span class="serif text-3xl tracking-[4px] block mb-1">SOLARE</span>
@@ -30,10 +31,16 @@
                 <h1 class="serif text-2xl text-gray-900">Regístrate</h1>
             </div>
 
-            {{-- Manejo de Errores de Red --}}
+            {{-- Alertas de Errores y Éxito --}}
             @if($errors->any())
-                <div class="bg-red-50 p-4 mb-6 border-l-4 border-solare-arcilla">
-                    <p class="text-[10px] uppercase font-bold text-solare-arcilla">{{ $errors->first() }}</p>
+                <div class="bg-red-50 p-4 mb-6 border-l-4 border-red-500">
+                    <p class="text-[10px] uppercase font-bold text-red-500">{{ $errors->first() }}</p>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                    <p class="text-[10px] uppercase tracking-widest font-bold text-red-500">{{ session('error') }}</p>
                 </div>
             @endif
 
@@ -42,22 +49,28 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1.5">Nombre</label>
-                        <input type="text" name="nombre" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="María">
+                        <input type="text" name="nombre" value="{{ old('nombre') }}" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="María">
                     </div>
                     <div>
                         <label class="block text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1.5">Apellido</label>
-                        <input type="text" name="apellido" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="García">
+                        <input type="text" name="apellido_paterno" value="{{ old('apellido_paterno') }}" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="García">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1.5">Correo Corporativo</label>
-                    <input type="email" name="email" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="maria@hotel.mx">
+                    <input type="email" name="correo" value="{{ old('correo') }}" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="maria@hotel.mx">
                 </div>
 
                 <div>
                     <label class="block text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1.5">Contraseña de Acceso</label>
-                    <input type="password" name="password" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="••••••••">
+                    <input type="password" name="contrasena" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="Mínimo 8 carac. (A, a, 1, @)">
+                </div>
+                
+                {{-- Campo necesario para la validación confirmed de Laravel --}}
+                <div>
+                    <label class="block text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1.5">Confirmar Contraseña</label>
+                    <input type="password" name="contrasena_confirmation" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="Repite tu contraseña">
                 </div>
 
                 <div class="pt-4">
@@ -73,7 +86,7 @@
         </div>
     </div>
 
-    {{-- Panel de Marca Lateral (Solo Desktop) --}}
+    {{-- Panel de Marca Lateral ORIGINAL --}}
     <div class="hidden lg:flex w-[350px] bg-solare-musgo p-12 flex-col justify-center gap-12 text-white">
         <blockquote class="serif text-2xl font-light leading-relaxed italic opacity-90">
             "El exterior es una extensión del hogar."
