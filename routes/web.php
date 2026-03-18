@@ -52,4 +52,4 @@ Route::post('/checkout/pedido-realizado', function () {
 
 Route::get('/checkout/pedido-realizado', function () {
     return view('cliente.pedido_realizado');
-})->name('cliente.pedido.realizado');
+})->name('cliente.pedido.ver');
