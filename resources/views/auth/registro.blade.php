@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOLARE | Solicitar Acceso</title>
+    <title>SOLARE | Regístrate</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -27,7 +27,7 @@
                     <span class="serif text-3xl tracking-[4px] block mb-1">SOLARE</span>
                 </a>
                 <span class="text-[9px] font-bold tracking-[2.5px] uppercase text-solare-arcilla block mb-2">Nueva cuenta</span>
-                <h1 class="serif text-2xl text-gray-900">Solicitar acceso</h1>
+                <h1 class="serif text-2xl text-gray-900">Regístrate</h1>
             </div>
 
             {{-- Manejo de Errores de Red --}}
@@ -62,7 +62,7 @@
 
                 <div class="pt-4">
                     <button type="submit" class="w-full bg-solare-arcilla text-white py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-solare-musgo transition flex items-center justify-center gap-2">
-                        SOLICITAR ACCESO <span class="text-lg">→</span>
+                        REGÍSTRATE <span class="text-lg">→</span>
                     </button>
                 </div>
             </form>

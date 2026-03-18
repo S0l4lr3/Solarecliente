@@ -222,7 +222,7 @@
                     </form>
                 @else
                     <a href="/login" class="nav-link">Entrar</a>
-                    <a href="/registro" class="btn btn-primary">Solicitar Acceso</a>
+                    <a href="/registro" class="btn btn-primary">Regístrate</a>
                 @endif
             </nav>
         </div>

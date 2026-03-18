@@ -72,7 +72,7 @@
         <div class="mt-12 pt-8 border-t border-gray-100 text-center">
             <p class="text-[10px] uppercase tracking-widest text-gray-400">
                 ¿No tienes cuenta? 
-                <a href="{{ route('registro') }}" class="text-solare-arcilla font-bold hover:underline">Solicitar Acceso</a>
+                <a href="{{ route('registro') }}" class="text-solare-arcilla font-bold hover:underline">Regístrate</a>
             </p>
         </div>
     </div>
