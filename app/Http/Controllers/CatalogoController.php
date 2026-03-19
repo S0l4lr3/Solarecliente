@@ -12,7 +12,7 @@ class CatalogoController extends Controller
      */
     public function home()
     {
-        $response = Http::get('https://solare-backend-production.up.railway.app/api/productos');
+        $response = Http::get(env('API_URL') . '/productos');
         $muebles = $response->successful() ? array_slice($response->json(), 0, 4) : [];
         return view('cliente.home', compact('muebles'));
     }
@@ -39,8 +39,8 @@ class CatalogoController extends Controller
         }
 
         // 3. Petición al Backend en Railway
-        $responseProductos = Http::get('https://solare-backend-production.up.railway.app/api/productos', $params);
-        $responseCategorias = Http::get('https://solare-backend-production.up.railway.app/api/categorias');
+        $responseProductos = Http::get(env('API_URL') . '/productos', $params);
+        $responseCategorias = Http::get(env('API_URL') . '/categorias');
 
         $muebles = $responseProductos->successful() ? $responseProductos->json() : [];
         $categorias = $responseCategorias->successful() ? $responseCategorias->json() : [];

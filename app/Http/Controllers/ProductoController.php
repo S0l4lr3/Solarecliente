@@ -13,7 +13,7 @@ class ProductoController extends Controller
     public function show($id)
     {
         // 1. Petición al Nodo Central por el mueble específico
-        $response = Http::get("https://solare-backend-production.up.railway.app/api/productos/{$id}");
+        $response = Http::get(env('API_URL') . "/productos/{$id}");
 
         if ($response->successful()) {
             $mueble = $response->json();

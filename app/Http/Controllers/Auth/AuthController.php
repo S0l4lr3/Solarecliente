@@ -10,7 +10,12 @@ use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
-    protected $apiUrl = 'https://solare-backend-production.up.railway.app/api';
+    protected $apiUrl;
+
+    public function __construct()
+    {
+        $this->apiUrl = env('API_URL');
+    }
 
     public function Formulario()
     {
