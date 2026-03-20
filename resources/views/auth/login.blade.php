@@ -35,6 +35,7 @@
     </div>
 
     {{-- Formulario de Inicio de Sesión --}}
+    @csrf
     <div class="w-full lg:w-[480px] bg-white p-12 flex flex-col justify-center">
         <div class="mb-10 text-center lg:text-left">
             <span class="text-[10px] font-bold tracking-[2.5px] uppercase text-solare-arcilla">Bienvenido de nuevo</span>
@@ -83,6 +84,7 @@
                 class="w-full bg-solare-arcilla text-white py-4 text-xs font-bold uppercase tracking-widest hover:bg-solare-musgo transition shadow-lg shadow-solare-arcilla/20">
                 Entrar al sistema
             </button>
+            
         </form>
 
         <div class="mt-12 pt-8 border-t border-gray-100 text-center">

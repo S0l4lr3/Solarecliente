@@ -10,15 +10,15 @@
         <div>
             @php 
                 $imagenUrl = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?fm=webp'; 
-                if(!empty($mueble['imagenes'])) {
-                    $imagenUrl = $mueble['imagenes'][0]['url'] ?? $imagenUrl;
+                if(!empty($mueble['full_image_url'])) {
+                    $imagenUrl = $mueble['full_image_url'] ?? $imagenUrl;
                 }
             @endphp
             <div style="background-color: #f9f9f9; overflow: hidden; border-radius: 4px;">
                 <img src="{{ $imagenUrl }}" alt="{{ $mueble['nombre'] }}" 
                      style="width: 100%; height: 600px; object-fit: cover;">
             </div>
-            
+            {{-- @dd($mueble) --}}
             @if(count($mueble['imagenes']) > 1)
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem;">
                     @foreach($mueble['imagenes'] as $img)

@@ -7,12 +7,17 @@ use Illuminate\Support\Facades\Http;
 
 class CatalogoController extends Controller
 {
+    protected $apiUrl;
+    public function __construct()
+    {
+        $this->apiUrl = env('API_URL', 'http://localhost:8000/api');
+    }
     /**
      * Muestra la página de inicio con productos destacados.
      */
     public function home()
     {
-        $response = Http::get(env('API_URL') . '/productos');
+        $response = Http::get($this->apiUrl . '/productos');
         $muebles = $response->successful() ? array_slice($response->json(), 0, 4) : [];
         return view('cliente.home', compact('muebles'));
     }
@@ -39,10 +44,11 @@ class CatalogoController extends Controller
         }
 
         // 3. Petición al Backend en Railway
-        $responseProductos = Http::get(env('API_URL') . '/productos', $params);
-        $responseCategorias = Http::get(env('API_URL') . '/categorias');
+        $responseProductos = Http::get($this->apiUrl . '/productos', $params);
+        $responseCategorias = Http::get($this->apiUrl . '/categorias');
 
         $muebles = $responseProductos->successful() ? $responseProductos->json() : [];
+        //dd($muebles);
         $categorias = $responseCategorias->successful() ? $responseCategorias->json() : [];
 
         // 4. Enviamos a la vista con todas las variables necesarias

@@ -142,8 +142,8 @@
                         <div class="product-card">
                             @php
                                 $imagenUrl = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?fm=webp';
-                                if (!empty($mueble['imagenes'])) {
-                                    $imagenUrl = $mueble['imagenes'][0]['url'] ?? $imagenUrl;
+                                if (!empty($mueble['full_image_url'])) {
+                                    $imagenUrl = $mueble['full_image_url'] ?? $imagenUrl;
                                 }
                             @endphp
 

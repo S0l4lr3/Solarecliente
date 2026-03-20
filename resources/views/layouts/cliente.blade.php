@@ -214,8 +214,9 @@
                         </span>
                     @endif
                 </a>
-                @if(session('cliente_token'))
-                    <span class="nav-link" style="color: var(--color-clay-brown)">{{ session('cliente_data.nombre') }}</span>
+                
+                @if(session('token'))
+                    <span class="nav-link" style="color: var(--color-clay-brown)">{{ session('user.nombre') }}</span>
                     <form action="{{ route('logout') }}" method="POST" style="display:inline">
                         @csrf
                         <button type="submit" class="nav-link" style="background:none; border:none; cursor:pointer">Salir</button>

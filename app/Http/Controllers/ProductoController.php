@@ -17,9 +17,10 @@ class ProductoController extends Controller
 
         if ($response->successful()) {
             $mueble = $response->json();
+            
             return view('cliente.producto-detalle', compact('mueble'));
         }
 
-        return redirect()->route('catalogo')->with('error', 'El mueble solicitado no está disponible en la red.');
+        return redirect()->route('catalogo')->with('error', 'El mueble solicitado no está disponible.');
     }
 }

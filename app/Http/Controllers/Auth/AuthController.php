@@ -40,6 +40,7 @@ class AuthController extends Controller
             Session::put('user', $data['data']['user'] ?? []);
             return redirect()->route('catalogo')->with('success', 'Bienvenido de nuevo.');
         }
+       
 
         $mensaje = $response->json()['mensaje'] ?? 'Credenciales incorrectas.';
         return back()->with('error', $mensaje);
