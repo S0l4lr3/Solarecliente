@@ -216,7 +216,7 @@
                 </a>
                 
                 @if(session('token'))
-                    <span class="nav-link" style="color: var(--color-clay-brown)">{{ session('user.nombre') }}</span>
+                    <a href="{{ route('cliente.perfil') }}" class="nav-link" style="color: var(--color-clay-brown); text-decoration: none;">{{ session('user.nombre') }}</a>
                     <form action="{{ route('logout') }}" method="POST" style="display:inline">
                         @csrf
                         <button type="submit" class="nav-link" style="background:none; border:none; cursor:pointer">Salir</button>

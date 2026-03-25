@@ -34,22 +34,16 @@ Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
 Route::get('/registro', [AuthController::class, 'Registro'])->name('registro');
 Route::post('/registro', [AuthController::class, 'Register'])->name('register.post');
 
+use App\Http\Controllers\ClienteController;
+
+// Rutas de Perfil y Dirección (Solo para clientes autenticados)
+Route::get('/perfil', [ClienteController::class, 'perfil'])->name('cliente.perfil');
+Route::get('/perfil/editar', [ClienteController::class, 'editarPerfil'])->name('cliente.perfil.editar');
+Route::put('/perfil/update', [ClienteController::class, 'updatePerfil'])->name('cliente.perfil.update');
+
+Route::get('/direccion', [ClienteController::class, 'direccion'])->name('cliente.direccion');
+Route::get('/direccion/editar', [ClienteController::class, 'editarDireccion'])->name('cliente.direccion.editar');
+Route::put('/direccion/update', [ClienteController::class, 'updateDireccion'])->name('cliente.direccion.update');
+
 // Aviso de Privacidad
 Route::view('/aviso-privacidad', 'aviso-privacidad')->name('aviso.privacidad');
-
-// Check out
-Route::get('/checkout/envio', function () {
-    return view('cliente.formulario_envio');
-})->name('cliente.envio');
-
-Route::get('/checkout/pago', function () {
-    return view('cliente.formulario_pago');
-})->name('cliente.pago');
-
-Route::post('/checkout/pedido-realizado', function () {
-    return redirect()->route('cliente.pedido.realizado');
-})->name('cliente.pedido.realizado');
-
-Route::get('/checkout/pedido-realizado', function () {
-    return view('cliente.pedido_realizado');
-})->name('cliente.pedido.ver');
