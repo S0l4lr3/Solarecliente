@@ -192,6 +192,7 @@
             </div>
 
             <button type="submit" form="formularioEnvio" class="btn btn-primary" style="width: 100%; padding: 20px; font-size: 11px; border: none; cursor: pointer;">
+                <a href={{route('')}}
                 CONTINUAR AL PAGO
             </button>
             

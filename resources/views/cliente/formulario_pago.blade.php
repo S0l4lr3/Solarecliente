@@ -118,10 +118,10 @@
             </button>
             
             <div style="margin-top: 1.5rem; text-align: center;">
-                <a href="{{ $metodo == 'envio' ? route('cliente.envio') : route('carrito') }}" style="font-size: 10px; color: #999; text-decoration: none;">← Volver</a>
+                <a href="#" style="font-size: 10px; color: #999; text-decoration: none;">← Volver</a>
             </div>
         </div>
-    </div>
+    </div>  
 </div>
 
 <script>

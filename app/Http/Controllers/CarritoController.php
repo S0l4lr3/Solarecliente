@@ -28,8 +28,7 @@ class CarritoController extends Controller
 
  public function realizarCompra(Request $request)
 {
-// 1. Cambiamos auth()->check() por la verificación de tu sesión personalizada
-    if (!session()->has('cliente_token')) {
+    if (!session()->has('token')) {
         // Guardamos la intención de compra para redirigir después del login (opcional)
         session(['url.intended' => url()->current()]);
         
@@ -45,16 +44,22 @@ class CarritoController extends Controller
         return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
     }
 
-    // Obtener el método de entrega
+    // Obtener el modo de entrega
     $metodo_entrega = $request->metodo_entrega ?? session()->get('metodo_entrega', 'pickup');
     
     // Guardar en sesión para persistencia
     session()->put('metodo_entrega', $metodo_entrega);
     
-    // Realizar cálculos
-    $calculos = $this->calcularTotales($cart, $metodo_entrega);
-    
-    return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
+    if ($metodo_entrega === 'pickup') {
+        // Si recogen en tienda
+        $calculos = $this->calcularTotales($cart, $metodo_entrega);
+        
+        return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
+    } else {
+        // Si es envío a domicilio, los mandamos a llenar sus datos de envío primero.
+
+        return view('cliente.formulario_envio');
+    }
 }
 
     /**
