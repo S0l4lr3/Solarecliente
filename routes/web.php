@@ -45,5 +45,9 @@ Route::get('/direccion', [ClienteController::class, 'direccion'])->name('cliente
 Route::get('/direccion/editar', [ClienteController::class, 'editarDireccion'])->name('cliente.direccion.editar');
 Route::put('/direccion/update', [ClienteController::class, 'updateDireccion'])->name('cliente.direccion.update');
 
+//Realizar pedidos
+Route::post('/cliente/pedido/realizado', [ClienteController::class, 'realizarPedido'])->name('cliente.pedido.realizado');
+Route::get('/cliente/pedido');
+
 // Aviso de Privacidad
 Route::view('/aviso-privacidad', 'aviso-privacidad')->name('aviso.privacidad');
