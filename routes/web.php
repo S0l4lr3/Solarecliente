@@ -5,11 +5,10 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoController;
-
+use App\Http\Controllers\ClienteController;
 
 // Ruta principal
 Route::get('/', [CatalogoController::class, 'home'])->name('home');
-
 
 // Catálogo
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo');
@@ -34,7 +33,6 @@ Route::post('/logout', [AuthController::class, 'Logout'])->name('logout');
 Route::get('/registro', [AuthController::class, 'Registro'])->name('registro');
 Route::post('/registro', [AuthController::class, 'Register'])->name('register.post');
 
-use App\Http\Controllers\ClienteController;
 
 // Rutas de Perfil y Dirección (Solo para clientes autenticados)
 Route::get('/perfil', [ClienteController::class, 'perfil'])->name('cliente.perfil');
@@ -47,3 +45,9 @@ Route::put('/direccion/update', [ClienteController::class, 'updateDireccion'])->
 
 // Aviso de Privacidad
 Route::view('/aviso-privacidad', 'aviso-privacidad')->name('aviso.privacidad');
+
+//Flujo de carrito y compra 
+Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
+Route::get('/carrito/realizar-compra', [CarritoController::class, 'realizarCompra'])->name('carrito.realizarCompra');
+Route::post('/carrito/pago', [CarritoController::class, 'mostrarFormularioPago'])->name('cliente.pago');
+Route::post('/carrito/finalizar', [CarritoController::class, 'procesarPedido'])->name('cliente.pedido.realizado');

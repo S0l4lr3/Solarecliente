@@ -113,13 +113,17 @@
                 </div>
             </div>
 
-            <button type="submit" form="formularioPago" class="btn btn-primary" style="width: 100%; padding: 20px; font-size: 11px; border: none; cursor: pointer;">
-                CONFIRMAR PEDIDO
-            </button>
-            
-            <div style="margin-top: 1.5rem; text-align: center;">
-                <a href="#" style="font-size: 10px; color: #999; text-decoration: none;">← Volver</a>
-            </div>
+            <form method="POST" action="{{ route('cliente.pedido.realizado') }}" id="formularioPago">
+                @csrf
+
+                <button type="submit" form="formularioPago" style="width: 100%; padding: 20px; font-size: 11px; letter-spacing: 2px; background-color: #000; color: white; border: none; cursor: pointer; text-transform: uppercase; font-weight: bold;">
+                    CONFIRMAR PEDIDO 
+                </button>
+
+                
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <a href="{{ route('carrito') }}" style="font-size: 10px; color: #999; text-decoration: none; text-transform: uppercase;">← Volver al carrito</a>
+                </div>
         </div>
     </div>  
 </div>

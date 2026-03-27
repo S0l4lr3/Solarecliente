@@ -8,68 +8,73 @@ use App\Models\DetallePedido;
 
 class CarritoController extends Controller
 {
-    const IVA_RATE = 0.16; // IVA
-    const ENVIO_COST = 200; // Costo de envío fijo
-    const PICKUP_COST = 0; // Recoger en tienda no tiene costo 
+    const IVA_RATE = 0.16;
+    const ENVIO_COST = 200;
+    const PICKUP_COST = 0;
 
-    /**
-     * Muestra el carrito de compras.
-     */
     public function index()
     {
         $cart = session()->get('cart', []);
         $metodo_entrega = session()->get('metodo_entrega', 'pickup');
-        
         $calculos = $this->calcularTotales($cart, $metodo_entrega);
-        
         return view('cliente.carrito', compact('cart', 'calculos', 'metodo_entrega'));
     }
 
+    public function realizarCompra(Request $request)
+    {
+        // Validación de sesión simple
+        if (!session()->has('token')) {
+            session(['url.intended' => url()->current()]);
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión para comprar.');
+        }
 
- public function realizarCompra(Request $request)
-{
-    if (!session()->has('token')) {
-        // Guardamos la intención de compra para redirigir después del login (opcional)
-        session(['url.intended' => url()->current()]);
-        
-        return redirect()->route('login')
-            ->with('error', 'Debes iniciar sesión o registrarte para realizar una compra.');
-    }
-    
-    // Si tiene sesión activa, recuperamos el carrito
-    $cart = session()->get('cart', []);
+        $cart = session()->get('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('carrito')->with('error', 'Tu carrito está vacío.');
+        }
 
-    // Validar que el carrito no esté vacío antes de ir a pago
-    if (empty($cart)) {
-        return redirect()->route('carrito.index')->with('error', 'Tu carrito está vacío.');
-    }
+        $metodo_entrega = $request->metodo_entrega ?? session()->get('metodo_entrega', 'pickup');
+        session()->put('metodo_entrega', $metodo_entrega);
 
-    // Obtener el modo de entrega
-    $metodo_entrega = $request->metodo_entrega ?? session()->get('metodo_entrega', 'pickup');
-    
-    // Guardar en sesión para persistencia
-    session()->put('metodo_entrega', $metodo_entrega);
-    
-    if ($metodo_entrega === 'pickup') {
-        // Si recogen en tienda
-        $calculos = $this->calcularTotales($cart, $metodo_entrega);
-        
-        return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
-    } else {
-        // Si es envío a domicilio, los mandamos a llenar sus datos de envío primero.
+        if ($metodo_entrega === 'pickup') {
+            $calculos = $this->calcularTotales($cart, $metodo_entrega);
+            return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
+        }
 
         return view('cliente.formulario_envio');
     }
-}
 
-    /**
-     * Añade un mueble al carrito local.
-     */
+    // NUEVO: Recibe datos de envío y muestra pago
+    public function mostrarFormularioPago(Request $request)
+    {
+        // Guardamos datos de envío en sesión para usarlos al final
+        session(['datos_envio' => $request->all()]);
+
+        $cart = session()->get('cart', []);
+        $metodo_entrega = session()->get('metodo_entrega', 'envio');
+        $calculos = $this->calcularTotales($cart, $metodo_entrega);
+
+        return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
+    }
+
+    // Procesa el guardado final en la BD
+    public function procesarPedido(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        if (empty($cart)) return redirect()->route('catalogo');
+
+        // Aquí iría tu lógica de $pedido = Pedido::create([...]);
+
+        // Limpiar sesión
+        session()->forget(['cart', 'metodo_entrega', 'datos_envio']);
+
+        return redirect()->route('catalogo')->with('success', '¡Pedido realizado con éxito!');
+    }
+
     public function add(Request $request)
     {
         $cart = session()->get('cart', []);
         $id = $request->id;
-
         if(isset($cart[$id])) {
             $cart[$id]['cantidad']++;
         } else {
@@ -80,15 +85,10 @@ class CarritoController extends Controller
                 "imagen" => $request->imagen
             ];
         }
-
         session()->put('cart', $cart);
-        
-        return redirect()->back()->with('success', 'Producto agregado al carrito.');
+        return redirect()->back()->with('success', 'Producto agregado.');
     }
 
-    /**
-     * Elimina un producto del carrito.
-     */
     public function remove(Request $request)
     {
         if($request->id) {
@@ -98,76 +98,24 @@ class CarritoController extends Controller
                 session()->put('cart', $cart);
             }
         }
-        return redirect()->back()->with('success', 'Producto eliminado del carrito.');
+        return redirect()->back()->with('success', 'Producto eliminado.');
     }
 
-    /**
-     * Actualiza el método de entrega para envío o pickup
-     */
     public function updateMetodoEntrega(Request $request)
     {
         $metodo_entrega = $request->metodo_entrega;
-        
-        if (!in_array($metodo_entrega, ['envio', 'pickup'])) {
-            return response()->json(['error' => 'Método no válido'], 400);
-        }
-        
         session()->put('metodo_entrega', $metodo_entrega);
-        
         return response()->json([
             'success' => true,
             'calculos' => $this->calcularTotales(session()->get('cart', []), $metodo_entrega)
         ]);
     }
 
-    /**
-     * Procesa el pedido
-     */
-    public function procesarPedido(Request $request)
-    {
-            // Verificar si el usuario está autenticado (registrado)
-    if (response()->json(['error' => 'Debes iniciar sesión o registrarte para realizar una compra.'])) {
-        // Usuario no está registrado - redirigir al login con mensaje
-        return redirect()->route('login')
-            ->with('error', 'Debes iniciar sesión o registrarte para realizar una compra.');
-    }else{
-        $cart = session()->get('cart', []);
-        
-        if (empty($cart)) {
-            return redirect()->back()->with('error', 'El carrito está vacío');
-        }
-
-        $metodo_entrega = session()->get('metodo_entrega', 'pickup');
-        $calculos = $this->calcularTotales($cart, $metodo_entrega);
-
-
-        // Limpiar el carrito después de finalizar 
-        session()->forget('cart');
-        session()->forget('metodo_entrega');
-
-        return redirect()->route('catalogo')->with('success', '¡Pedido realizado con éxito! Pronto te contactaremos para confirmar.');
-    }
-}
-
-    /**
-     * Calcula todos los totales basado en el método de entrega
-     */
     public function calcularTotales($cart, $metodo_entrega = 'pickup')
     {
         $subtotal = $this->calcularSubtotal($cart);
         $iva = $subtotal * self::IVA_RATE;
-        
-        $costo_entrega = 0;
-        $metodo_texto = '';
-        
-        if ($metodo_entrega === 'envio') {
-            $costo_entrega = self::ENVIO_COST;
-            $metodo_texto = 'Envío a domicilio';
-        } else {
-            $costo_entrega = self::PICKUP_COST;
-            $metodo_texto = 'Recoger en tienda (Pick Up)';
-        }
-        
+        $costo_entrega = ($metodo_entrega === 'envio') ? self::ENVIO_COST : self::PICKUP_COST;
         $total = $subtotal + $iva + $costo_entrega;
 
         return [
@@ -175,27 +123,16 @@ class CarritoController extends Controller
             'iva' => $iva,
             'costo_entrega' => $costo_entrega,
             'total' => $total,
-            'metodo_entrega' => $metodo_entrega,
-            'metodo_texto' => $metodo_texto,
-            
             'subtotal_formato' => '$' . number_format($subtotal, 2),
             'iva_formato' => '$' . number_format($iva, 2),
-            'costo_entrega_formato' => $costo_entrega > 0 ? '$' . number_format($costo_entrega, 2) : 'Gratis',
             'total_formato' => '$' . number_format($total, 2) . ' MXN'
         ];
     }
 
-    /**
-     * Calcula el subtotal del carrito
-     */
     private function calcularSubtotal($cart)
     {
         $subtotal = 0;
-        foreach($cart as $item) {
-            $subtotal += $item['precio'] * $item['cantidad'];
-        }
+        foreach($cart as $item) { $subtotal += $item['precio'] * $item['cantidad']; }
         return $subtotal;
     }
-
-
-}
+} 
