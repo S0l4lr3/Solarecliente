@@ -52,6 +52,6 @@ Route::view('/aviso-privacidad', 'aviso-privacidad')->name('aviso.privacidad');
 
 //Flujo de carrito y compra 
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
-Route::get('/carrito/realizar-compra', [CarritoController::class, 'realizarCompra'])->name('carrito.realizarCompra');
+#Route::get('/carrito/realizar-compra', [CarritoController::class, 'realizarCompra'])->name('carrito.realizarCompra');
 Route::post('/carrito/pago', [CarritoController::class, 'mostrarFormularioPago'])->name('cliente.pago');
 Route::post('/carrito/finalizar', [CarritoController::class, 'procesarPedido'])->name('cliente.pedido.realizado');
