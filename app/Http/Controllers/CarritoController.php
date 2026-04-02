@@ -22,9 +22,8 @@ class CarritoController extends Controller
 
     public function realizarCompra(Request $request)
     {
-        // Validación de sesión simple
+        // 1. Verificar sesión (Usamos 'token' que es lo que pone AuthController)
         if (!session()->has('token')) {
-            session(['url.intended' => url()->current()]);
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para comprar.');
         }
 
@@ -36,12 +35,11 @@ class CarritoController extends Controller
         $metodo_entrega = $request->metodo_entrega ?? session()->get('metodo_entrega', 'pickup');
         session()->put('metodo_entrega', $metodo_entrega);
 
-        if ($metodo_entrega === 'pickup') {
-            $calculos = $this->calcularTotales($cart, $metodo_entrega);
-            return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
-        }
-
-        return view('cliente.formulario_envio');
+        $calculos = $this->calcularTotales($cart, $metodo_entrega);
+        
+        // Si es envío, podríamos pedir dirección, pero por ahora vamos directo al pago
+        // para que pruebes PayPal de una vez.
+        return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
     }
 
     // NUEVO: Recibe datos de envío y muestra pago
@@ -60,14 +58,32 @@ class CarritoController extends Controller
     // Procesa el guardado final en la BD
     public function procesarPedido(Request $request)
     {
+        // 1. Verificar sesión
+        if (!session()->has('token')) {
+            return redirect()->route('login')->with('error', 'Debes iniciar sesión.');
+        }
+
         $cart = session()->get('cart', []);
         if (empty($cart)) return redirect()->route('catalogo');
 
-        // Aquí iría tu lógica de $pedido = Pedido::create([...]);
+        $metodo_pago = $request->metodo_pago;
+        $metodo_entrega = session()->get('metodo_entrega', 'pickup');
+        $calculos = $this->calcularTotales($cart, $metodo_entrega);
 
-        // Limpiar sesión
+        // 2. Simular ID de pedido (Pronto lo haremos real con el Backend)
+        $pedido_id = rand(1000, 9999); 
+        session(['last_order_id' => $pedido_id]);
+
+        // 3. Si eligió PayPal, redirigir
+        if ($metodo_pago === 'paypal') {
+            return redirect()->route('paypal.payment', [
+                'monto' => $calculos['total'],
+                'id_pedido' => $pedido_id
+            ]);
+        }
+
+        // Si es otro método
         session()->forget(['cart', 'metodo_entrega', 'datos_envio']);
-
         return redirect()->route('catalogo')->with('success', '¡Pedido realizado con éxito!');
     }
 

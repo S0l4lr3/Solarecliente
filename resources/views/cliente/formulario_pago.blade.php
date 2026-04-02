@@ -16,7 +16,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('cliente.pedido.realizado') }}" id="formularioPago">
+            <form method="POST" action="{{ route('carrito.procesar') }}" id="formularioPago">
                 @csrf
                 
                 {{-- Datos personales --}}
@@ -26,12 +26,12 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                         <div>
                             <label style="display: block; font-size: 12px; margin-bottom: 5px; color: #666;">Nombre completo *</label>
-                            <input type="text" name="nombre" required value="{{ old('nombre', session('cliente_data.nombre') ?? '') }}"
+                            <input type="text" name="nombre" required value="{{ old('nombre', session('user.nombre') ?? '') }}"
                                    style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px;">
                         </div>
                         <div>
                             <label style="display: block; font-size: 12px; margin-bottom: 5px; color: #666;">Email *</label>
-                            <input type="email" name="email" required value="{{ old('email', session('cliente_data.correo') ?? '') }}"
+                            <input type="email" name="email" required value="{{ old('email', session('user.correo') ?? '') }}"
                                    style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px;">
                         </div>
                     </div>
@@ -48,17 +48,17 @@
                     <h3 class="serif" style="font-size: 1.2rem; margin-bottom: 1.5rem;">Método de pago</h3>
                     
                     <div style="margin-bottom: 1rem;">
-                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding: 10px; border: 1px solid #edebe8; border-radius: 4px; cursor: pointer;">
-                            <input type="radio" name="metodo_pago" value="tarjeta" checked style="cursor: pointer;">
-                            <span>Tarjeta de crédito/débito</span>
+                        <label style="display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; padding: 15px; border: 1px solid #edebe8; border-radius: 4px; cursor: pointer; transition: all 0.3s; background: #fff;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="radio" name="metodo_pago" value="paypal" checked style="cursor: pointer;">
+                                <span style="font-weight: 500;">PayPal (Saldo, Tarjetas o Crédito)</span>
+                            </div>
+                            <img src="https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg" alt="PayPal Logo" style="height: 23px;">
                         </label>
-                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding: 10px; border: 1px solid #edebe8; border-radius: 4px; cursor: pointer;">
+
+                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding: 15px; border: 1px solid #edebe8; border-radius: 4px; cursor: pointer; background: #fff;">
                             <input type="radio" name="metodo_pago" value="efectivo" style="cursor: pointer;">
                             <span>Efectivo (Pago contra entrega)</span>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding: 10px; border: 1px solid #edebe8; border-radius: 4px; cursor: pointer;">
-                            <input type="radio" name="metodo_pago" value="transferencia" style="cursor: pointer;">
-                            <span>Transferencia bancaria</span>
                         </label>
                     </div>
                 </div>
@@ -83,16 +83,18 @@
                     $subtotal += $item['precio'] * $item['cantidad'];
                 }
                 $iva = $subtotal * 0.16;
-                $costo_envio = ($metodo == 'envio') ? 350 : 0;
+                $costo_envio = ($metodo == 'envio') ? 200 : 0;
                 $total = $subtotal + $iva + $costo_envio;
             @endphp
 
-            @foreach($cart as $details)
-                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 14px;">
-                    <span>{{ $details['nombre'] }} x{{ $details['cantidad'] }}</span>
-                    <span>${{ number_format($details['precio'] * $details['cantidad'], 2) }}</span>
-                </div>
-            @endforeach
+            <div style="max-height: 200px; overflow-y: auto; margin-bottom: 1rem;">
+                @foreach($cart as $details)
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 14px;">
+                        <span>{{ $details['nombre'] }} x{{ $details['cantidad'] }}</span>
+                        <span>${{ number_format($details['precio'] * $details['cantidad'], 2) }}</span>
+                    </div>
+                @endforeach
+            </div>
 
             <div style="border-top: 1px solid #edebe8; margin: 1rem 0; padding-top: 1rem;">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
@@ -113,17 +115,13 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('cliente.pedido.realizado') }}" id="formularioPago">
-                @csrf
+            <button type="submit" form="formularioPago" style="width: 100%; padding: 20px; font-size: 11px; letter-spacing: 2px; background-color: #000; color: white; border: none; cursor: pointer; text-transform: uppercase; font-weight: bold; margin-top: 1rem;">
+                CONFIRMAR PEDIDO 
+            </button>
 
-                <button type="submit" form="formularioPago" style="width: 100%; padding: 20px; font-size: 11px; letter-spacing: 2px; background-color: #000; color: white; border: none; cursor: pointer; text-transform: uppercase; font-weight: bold;">
-                    CONFIRMAR PEDIDO 
-                </button>
-
-                
-                <div style="margin-top: 1.5rem; text-align: center;">
-                    <a href="{{ route('carrito') }}" style="font-size: 10px; color: #999; text-decoration: none; text-transform: uppercase;">← Volver al carrito</a>
-                </div>
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <a href="{{ route('carrito') }}" style="font-size: 10px; color: #999; text-decoration: none; text-transform: uppercase;">← Volver al carrito</a>
+            </div>
         </div>
     </div>  
 </div>
