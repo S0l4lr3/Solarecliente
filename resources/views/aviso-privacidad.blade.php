@@ -6,6 +6,12 @@
 <div class="container" style="padding-top: 6rem; padding-bottom: 6rem; max-width: 800px;">
     <h1 class="serif" style="font-size: 2.5rem; color: var(--color-dark-moss); margin-bottom: 3rem; text-align: center; letter-spacing: 4px;">AVISO DE PRIVACIDAD</h1>
     
+    <div style="text-align: center; margin-bottom: 2rem;">
+    <a href="{{ route('aviso.descargar') }}" style="background-color: var(--color-dark-moss, #4a5d23); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-family: sans-serif; font-size: 14px; display: inline-block;">
+    Descargar en PDF
+    </a>
+</div>
+
     <div style="line-height: 1.8; color: #555; font-size: 15px; text-align: justify;">
         <p style="margin-bottom: 2rem;">
             <strong>SOLARE MUEBLES</strong>, con domicilio para oír y recibir notificaciones <a href="http://www.solaremuebles.com.mx" style="color: var(--color-clay-brown); text-decoration: none;">www.solaremuebles.com.mx</a>, es responsable del uso y protección de sus datos personales, y al respecto le informa lo siguiente:

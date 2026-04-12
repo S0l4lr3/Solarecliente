@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClienteController extends Controller
 {
@@ -88,5 +89,14 @@ class ClienteController extends Controller
     }
 
     return back()->with('error', 'Error al actualizar el perfil.');
+}
+
+public function descargarAvisoPrivacidad()
+{
+    // Cargamos la vista que acabamos de crear en la carpeta pdf
+    $pdf = Pdf::loadView('pdf.aviso-privacidaad');
+    
+    // Retornamos la descarga del archivo
+    return $pdf->download('Aviso_Privacidad_Solare_Muebles.pdf');
 }
 }

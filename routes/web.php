@@ -43,3 +43,6 @@ Route::put('/perfil/update', [ClienteController::class, 'updatePerfil'])->name('
 Route::get('/direccion', [ClienteController::class, 'direccion'])->name('cliente.direccion');
 Route::get('/direccion/editar', [ClienteController::class, 'editarDireccion'])->name('cliente.direccion.editar');
 Route::put('/direccion/update', [ClienteController::class, 'updateDireccion'])->name('cliente.direccion.update');
+
+// PDF
+Route::get('/aviso-privacidaad/descargar', [ClienteController::class, 'descargarAvisoPrivacidad'])->name('aviso.descargar');
