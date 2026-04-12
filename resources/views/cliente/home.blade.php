@@ -11,7 +11,7 @@
                 Diseño y artesanía contemporánea para exterior
             </p>
             <div style="margin-top: 3rem;">
-                <a href="/catalogo" class="btn btn-primary" style="padding: 15px 40px; font-size: 11px;">Descubrir Colección</a>
+                <a href="/catalogo" class="btn btn-primary" style="padding: 17px 45px; font-size: 14px; width: auto; display: inline-block;">Descubrir Colección</a>
             </div>
         </div>
     </div>

@@ -4,88 +4,86 @@
 
 @section('content')
 
-<section class="bg-white dark:bg-gray-900 p-6 sm:p-10 rounded-2xl shadow-2xl max-w-3xl mx-auto border border-gray-100 dark:border-gray-800">
-
-    {{-- Encabezado --}}
-    <div class="flex flex-col sm:flex-row items-center justify-between mb-10 pb-8 border-b border-gray-200 dark:border-gray-700 gap-6">
-        <div class="text-center sm:text-left">
-            <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Mi Perfil</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Información personal de tu cuenta.</p>
+<div class="container" style="margin-top: 5rem; margin-bottom: 7rem;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+        
+        {{-- Encabezado de Perfil --}}
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5rem; border-bottom: 1px solid var(--color-sand-beige); padding-bottom: 2.5rem;">
+            <div>
+                <h1 class="serif" style="font-size: 3.5rem; color: var(--color-dark-moss); margin-bottom: 1rem;">Mi Perfil</h1>
+                <p style="font-size: 19px; text-transform: uppercase; letter-spacing: 2px; color: var(--color-clay-brown); font-weight: 700;">Gestiona tu información personal y de facturación</p>
+            </div>
+            <a href="{{ route('cliente.perfil.editar') }}" class="btn btn-primary" style="padding: 12px 30px; font-size: 13px; width: auto; display: inline-block;">Editar Datos</a>
         </div>
 
-        <a href="{{ route('cliente.perfil.editar') }}"
-           class="group inline-flex items-center justify-center px-6 py-3 font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-0.5 transition-all duration-200 w-full sm:w-auto">
-            <svg class="w-5 h-5 mr-2 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-            Editar Perfil
-        </a>
-    </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;">
+            
+            {{-- Columna 1: Datos Personales --}}
+            <div>
+                <h3 class="serif" style="font-size: 1.8rem; margin-bottom: 3rem; color: var(--color-dark-moss);">Datos de la Cuenta</h3>
+                
+                <div style="margin-bottom: 2.5rem;">
+                    <label style="display: block; font-size: 17px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 1rem; color: #999;">Nombre Completo</label>
+                    <p style="font-size: 22px; color: #333; font-weight: 400;">{{ $user['nombre'] }} {{ $user['apellido_paterno'] }} {{ $user['apellido_materno'] }}</p>
+                </div>
 
-    {{-- Sección: Información Personal --}}
-    <div>
-        <h3 class="text-xs font-bold text-blue-500 dark:text-blue-400 mb-6 flex items-center uppercase tracking-widest">
-            <span class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg mr-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
-            </span>
-            Información Personal
-        </h3>
+                <div style="margin-bottom: 2.5rem;">
+                    <label style="display: block; font-size: 17px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 1rem; color: #999;">Correo Electrónico</label>
+                    <p style="font-size: 22px; color: #333;">{{ $user['correo'] }}</p>
+                </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div style="margin-bottom: 2.5rem;">
+                    <label style="display: block; font-size: 17px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 1rem; color: #999;">Teléfono de Contacto</label>
+                    <p style="font-size: 22px; color: #333;">{{ $user['telefono'] ?? 'No registrado' }}</p>
+                </div>
 
-            <div class="flex flex-col">
-                <dt class="block mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase ml-1">Nombre(s)</dt>
-                <dd class="w-full bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/50 text-gray-900 dark:text-white text-sm rounded-xl p-4 shadow-sm min-h-[50px] flex items-center">
-                    {{ $user['nombre'] ?? 'No registrado' }}
-                </dd>
+                <div style="margin-bottom: 2.5rem;">
+                    <label style="display: block; font-size: 17px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 1rem; color: #999;">Identificación Fiscal (RFC)</label>
+                    <p style="font-size: 22px; color: #333; text-transform: uppercase;">{{ $user['rfc'] ?? 'No registrado' }}</p>
+                </div>
             </div>
 
-            <div class="flex flex-col">
-                <dt class="block mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase ml-1">Apellido Paterno</dt>
-                <dd class="w-full bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/50 text-gray-900 dark:text-white text-sm rounded-xl p-4 shadow-sm min-h-[50px] flex items-center">
-                    {{ $user['apellido_paterno'] ?? 'No registrado' }}
-                </dd>
-            </div>
+            {{-- Columna 2: Dirección Principal --}}
+            <div style="background-color: #f9f9f9; padding: 4rem; border-radius: 4px;">
+                <h3 class="serif" style="font-size: 1.8rem; margin-bottom: 3rem; color: var(--color-dark-moss);">Dirección de Envío</h3>
+                
+                @if(isset($user['calle']))
+                    <div style="margin-bottom: 2rem;">
+                        <p style="font-size: 22px; line-height: 1.8; color: #444;">
+                            <strong>{{ $user['alias'] ?? 'Principal' }}</strong><br>
+                            {{ $user['calle'] }} #{{ $user['numero_exterior'] }} {{ $user['numero_interior'] ? 'Int. ' . $user['numero_interior'] : '' }}<br>
+                            Col. {{ $user['colonia'] }}<br>
+                            {{ $user['ciudad'] }}, {{ $user['estado'] }}<br>
+                            C.P. {{ $user['codigo_postal'] }}<br>
+                            {{ $user['pais'] }}
+                        </p>
+                    </div>
+                    
+                    @if(isset($user['referencias']))
+                        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee;">
+                            <label style="display: block; font-size: 17px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 1rem; color: #999;">Referencias</label>
+                            <p style="font-size: 20px; color: #666; font-style: italic;">"{{ $user['referencias'] }}"</p>
+                        </div>
+                    @endif
+                @else
+                    <p style="font-size: 20px; color: #888; margin-bottom: 4rem;">No has registrado una dirección de envío principal.</p>
+                @endif
 
-            <div class="flex flex-col">
-                <dt class="block mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase ml-1">Apellido Materno</dt>
-                <dd class="w-full bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/50 text-gray-900 dark:text-white text-sm rounded-xl p-4 shadow-sm min-h-[50px] flex items-center">
-                    {{ $user['apellido_materno'] ?? 'No registrado' }}
-                </dd>
-            </div>
-
-            <div class="flex flex-col md:col-span-3">
-                <dt class="block mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase ml-1">Correo Electrónico</dt>
-                <dd class="w-full bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/50 text-gray-900 dark:text-white text-sm rounded-xl p-4 shadow-sm min-h-[50px] flex items-center font-mono tracking-tight">
-                    {{ $user['correo'] ?? 'No registrado' }}
-                </dd>
+                <a href="{{ route('cliente.direccion') }}" style="display: inline-block; font-size: 17px; text-transform: uppercase; letter-spacing: 2px; color: var(--color-clay-brown); font-weight: 700; text-decoration: none; margin-top: 2rem; border-bottom: 2px solid var(--color-clay-brown); padding-bottom: 5px;">
+                    Gestionar Direcciones →
+                </a>
             </div>
 
         </div>
-    </div>
 
-    {{-- Acceso rápido a dirección --}}
-    <div class="mt-10 pt-8 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="text-sm text-gray-500 dark:text-gray-400">¿Quieres ver o cambiar tu dirección de envío?</p>
-        <a href="{{ route('cliente.direccion') }}" 
-           class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            Ver mi dirección de envío →
-        </a>
-    </div>
+        {{-- Sección de Seguridad --}}
+        <div style="margin-top: 7rem; padding: 5rem; border: 1px solid var(--color-sand-beige); text-align: center;">
+            <h3 class="serif" style="font-size: 1.8rem; margin-bottom: 2rem;">¿Necesitas cambiar tu contraseña?</h3>
+            <p style="font-size: 19px; color: #777; margin-bottom: 3rem;">Para actualizar tu contraseña o cambiar tu correo principal, pulsa el botón de editar perfil.</p>
+            <a href="{{ route('cliente.perfil.editar') }}" style="color: var(--color-dark-moss); font-size: 17px; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--color-dark-moss); padding-bottom: 8px;">Cambiar ajustes de seguridad</a>
+        </div>
 
-    <div class="mt-8 text-center">
-        <p class="text-xs text-gray-400 tracking-wider uppercase">Panel de Control de Cliente</p>
     </div>
-
-</section>
+</div>
 
 @endsection

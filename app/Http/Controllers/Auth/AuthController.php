@@ -95,6 +95,6 @@ class AuthController extends Controller
             Http::withToken($token)->post("{$this->apiUrl}/logout");
         }
         Session::forget(['token', 'user']);
-        return redirect()->route('login')->with('success', 'Sesión cerrada.');
+        return redirect()->route('catalogo')->with('success', 'Sesión cerrada.');
     }
 }

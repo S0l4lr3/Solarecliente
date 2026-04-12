@@ -38,7 +38,7 @@
 
                     <div>
                         <label style="display: block; font-size: 12px; margin-bottom: 5px; color: #666;">Teléfono *</label>
-                        <input type="tel" name="telefono" id="telefono" required maxlength="10"
+                        <input type="tel" name="telefono" id="telefono" 
                                style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px;">
                     </div>
                 </div>

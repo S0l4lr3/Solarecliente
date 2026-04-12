@@ -10,8 +10,9 @@ class CatalogoController extends Controller
     protected $apiUrl;
     public function __construct()
     {
-        $this->apiUrl = env('API_URL', 'http://localhost:8000/api');
+        $this->apiUrl = env('API_URL', 'http://localhost:8000/api');  
     }
+
     // esto va en tods cos controller del front mas la funcion de home  
 
     //backend puerto 8000 y los otros donde sea  

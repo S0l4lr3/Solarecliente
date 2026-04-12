@@ -8,25 +8,32 @@ use Illuminate\Support\Facades\Log;
 
 class PayPalController extends Controller
 {
-    private $apiUrl = "http://127.0.0.1:8000/api/paypal";
+    protected $apiUrl;
+
+    public function __construct()
+    {
+        // Leemos la URL base del backend desde el .}env o algo asi
+        $this->apiUrl = env('API_URL', 'http://localhost:8000/api');
+    }
 
     public function payment(Request $request)
     {
         $token = session('token');
         
-        // Obtenemos o generamos datos
+        // Obtenemos los datos del pedido
         $monto = $request->monto ?? session('monto_pedido', 0.00);
         $id_pedido = $request->id_pedido ?? session('last_order_id', rand(1000, 9999));
 
-        // GUARDAR EN SESIÓN PARA EL REGRESO
+        // Guardamos el ID del pedido en la sesión para recuperarlo al volver de PayPal
         session(['last_order_id' => $id_pedido]);
 
         if (!$token) {
-            return redirect()->route('login')->with('error', 'Sesión expirada.');
+            return redirect()->route('login')->with('error', 'Sesión expirada o no iniciada.');
         }
 
         try {
-            $response = Http::withToken($token)->timeout(20)->post($this->apiUrl . "/create", [
+            // Llamamos a la API del backend para crear la orden de PayPal
+            $response = Http::withToken($token)->timeout(20)->post($this->apiUrl . "/paypal/create", [
                 'monto' => $monto,
                 'id_pedido' => $id_pedido,
             ]);
@@ -38,13 +45,13 @@ class PayPalController extends Controller
                 }
             }
 
-            // SI FALLA, REGISTRAR EL ERROR Y REDIRIGIR A CANCEL
-            Log::error('PAYPAL CLIENT ERROR:', $response->json());
-            return redirect()->route('paypal.cancel')->with('error', 'PayPal rechazó la orden.');
+            // Si hay un error, registramos el log para auditoría
+            Log::error('PAYPAL_CREATE_ERROR:', $response->json() ?? ['error' => 'Respuesta vacía']);
+            return redirect()->route('paypal.cancel')->with('error', 'PayPal rechazó la orden. Revisa el log del backend.');
 
         } catch (\Exception $e) {
-            Log::error('PAYPAL CLIENT EXCEPTION:', ['msg' => $e->getMessage()]);
-            return redirect()->route('paypal.cancel')->with('error', $e->getMessage());
+            Log::error('PAYPAL_EXCEPTION_CREATE:', ['msg' => $e->getMessage()]);
+            return redirect()->route('paypal.cancel')->with('error', 'Error de conexión con el servidor de pagos.');
         }
     }
 
@@ -58,23 +65,25 @@ class PayPalController extends Controller
         }
 
         try {
+            // Llamamos a la API del backend para capturar el pago y reducir el inventario (Evita robo hormiga)
             $response = Http::withToken(session('token'))
-                ->post($this->apiUrl . "/capture", [
+                ->post($this->apiUrl . "/paypal/capture", [
                     'token' => $paypalToken,
                     'id_pedido' => $id_pedido
                 ]);
 
             if ($response->successful() && $response->json()['status'] == 'success') {
+                // Limpiamos el carrito y el ID del pedido solo si el pago fue exitoso
                 session()->forget(['last_order_id', 'cart']);
                 return view('cliente.pago_exitoso');
             }
 
-            Log::error('PAYPAL SUCCESS CAPTURE FAIL:', $response->json());
-            return redirect()->route('paypal.cancel')->with('error', 'No se pudo capturar el pago.');
+            Log::error('PAYPAL_CAPTURE_FAIL:', $response->json());
+            return redirect()->route('paypal.cancel')->with('error', 'No se pudo capturar el pago o confirmar el pedido.');
 
         } catch (\Exception $e) {
-            Log::error('PAYPAL SUCCESS EXCEPTION:', ['msg' => $e->getMessage()]);
-            return redirect()->route('paypal.cancel')->with('error', $e->getMessage());
+            Log::error('PAYPAL_EXCEPTION_CAPTURE:', ['msg' => $e->getMessage()]);
+            return redirect()->route('paypal.cancel')->with('error', 'Error al procesar la confirmación del pago.');
         }
     }
 
