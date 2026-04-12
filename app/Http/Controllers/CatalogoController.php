@@ -51,7 +51,6 @@ class CatalogoController extends Controller
         $responseCategorias = Http::get($this->apiUrl . '/categorias');
 
         $muebles = $responseProductos->successful() ? $responseProductos->json() : [];
-        dd($muebles);
         $categorias = $responseCategorias->successful() ? $responseCategorias->json() : [];
 
         // 4. Enviamos a la vista con todas las variables necesarias
