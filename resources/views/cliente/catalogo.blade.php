@@ -147,7 +147,7 @@
                                     $imagenUrl = $mueble['full_image_url'] ?? $imagenUrl;
                                 }
                             @endphp
-
+                            {{-- @dd($mueble) --}}
                             <a href="{{ route('producto.show', $mueble['id']) }}"
                                 style="text-decoration: none; color: inherit;">
                                 <div style="overflow: hidden; background-color: #f9f9f9;">
