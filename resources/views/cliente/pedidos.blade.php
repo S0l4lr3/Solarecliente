@@ -33,19 +33,19 @@
                                     #{{ str_pad($pedido['id'], 5, '0', STR_PAD_LEFT) }}
                                 </td>
                                 <td style="padding: 30px 10px; font-size: 18px; color: #666;">
-                                    {{ date('d/m/Y', strtotime($pedido['fecha'])) }}
+                                    {{ date('d/m/Y', strtotime($pedido['fecha_pedido'])) }}
                                 </td>
                                 <td style="padding: 30px 10px;">
-                                    @foreach($pedido['items'] as $item)
+                                    @foreach($pedido['detalles'] as $item)
                                         <div style="margin-bottom: 10px;">
-                                            <span style="display: block; font-size: 18px; font-weight: 600; color: #333;">{{ $item['producto'] }}</span>
-                                            <span style="font-size: 14px; color: #999; text-transform: uppercase;">Color: {{ $item['color'] }} | Cantidad: {{ $item['cantidad'] }}</span>
+                                            <span style="display: block; font-size: 18px; font-weight: 600; color: #333;">{{ $item['variante']['producto']['nombre'] ?? 'Producto Desconocido' }}</span>
+                                            <span style="font-size: 14px; color: #999; text-transform: uppercase;">Material: {{ $item['variante']['material']['nombre'] ?? 'N/A' }} | Cantidad: {{ $item['cantidad'] }}</span>
                                         </div>
                                     @endforeach
                                 </td>
                                 <td style="padding: 30px 10px; text-align: center;">
                                     <span style="padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; 
-                                        {{ $pedido['estado_pago'] == 'completado' ? 'background: #f0fdf4; color: #166534;' : 'background: #fef2f2; color: #991b1b;' }}">
+                                        {{ $pedido['estado_pago'] == 'pagado' ? 'background: #f0fdf4; color: #166534;' : 'background: #fef2f2; color: #991b1b;' }}">
                                         {{ $pedido['estado_pago'] }}
                                     </span>
                                 </td>
@@ -55,7 +55,7 @@
                                     </span>
                                 </td>
                                 <td style="padding: 30px 10px; text-align: right; font-size: 22px; font-weight: 700; color: #333;">
-                                    ${{ number_format($pedido['total_pedido'], 2) }}
+                                    ${{ number_format($pedido['total_pedido'] ?? $pedido->detalles->sum(function($d){ return $d->cantidad * $d->precio_unitario; }), 2) }}
                                 </td>
                             </tr>
                         @endforeach

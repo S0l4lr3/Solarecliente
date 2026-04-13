@@ -15,7 +15,10 @@
         </div>
 
         <h1 class="serif" style="font-size: 3.5rem; color: var(--color-dark-moss); margin-bottom: 1rem;">¡Gracias por tu compra!</h1>
-        <p style="font-size: 20px; color: #666; margin-bottom: 4rem;">Tu pago ha sido procesado correctamente. Hemos enviado un correo con los detalles de tu pedido.</p>
+        <p style="font-size: 20px; color: #666; margin-bottom: 2rem;">Tu pago ha sido procesado correctamente. Hemos enviado un correo con los detalles de tu pedido.</p>
+        @if($paypalTransactionId)
+        <p style="font-size: 16px; color: #999; margin-bottom: 4rem;">ID de Transacción PayPal: <span style="font-weight: 700; color: #333;">{{ $paypalTransactionId }}</span></p>
+        @endif
 
         @if($pedido)
             {{-- Detalle del Pedido Recién Pagado --}}
@@ -34,17 +37,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($pedido['items'] as $item)
+                        @php $totalCalculado = 0; @endphp
+                        @foreach($pedido['detalles'] as $item)
+                            @php $subtotal = $item['cantidad'] * $item['precio_unitario']; $totalCalculado += $subtotal; @endphp
                             <tr style="border-bottom: 1px solid #eee;">
                                 <td style="padding: 20px 0;">
-                                    <span style="display: block; font-size: 18px; font-weight: 600; color: #333;">{{ $item['producto'] }}</span>
-                                    <span style="font-size: 13px; color: #999; text-transform: uppercase;">Color: {{ $item['color'] }}</span>
+                                    <span style="display: block; font-size: 18px; font-weight: 600; color: #333;">{{ $item['variante']['producto']['nombre'] ?? 'Producto' }}</span>
+                                    <span style="font-size: 13px; color: #999; text-transform: uppercase;">Material: {{ $item['variante']['material']['nombre'] ?? 'N/A' }}</span>
                                 </td>
                                 <td style="padding: 20px 0; text-align: center; font-size: 18px; color: #666;">
                                     {{ $item['cantidad'] }}
                                 </td>
                                 <td style="padding: 20px 0; text-align: right; font-size: 18px; font-weight: 600; color: #333;">
-                                    ${{ number_format($item['precio'], 2) }}
+                                    ${{ number_format($item['precio_unitario'], 2) }}
                                 </td>
                             </tr>
                         @endforeach
@@ -52,7 +57,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="2" style="padding-top: 2rem; font-size: 20px; font-weight: 700; color: var(--color-dark-moss);">Total Pagado</td>
-                            <td style="padding-top: 2rem; text-align: right; font-size: 28px; font-weight: 700; color: var(--color-clay-brown);">${{ number_format($pedido['total'], 2) }}</td>
+                            <td style="padding-top: 2rem; text-align: right; font-size: 28px; font-weight: 700; color: var(--color-clay-brown);">${{ number_format($totalCalculado, 2) }}</td>
                         </tr>
                     </tfoot>
                 </table>

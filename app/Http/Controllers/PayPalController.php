@@ -36,6 +36,8 @@ class PayPalController extends Controller
             $response = Http::withToken($token)->timeout(20)->post($this->apiUrl . "/paypal/create", [
                 'monto' => $monto,
                 'id_pedido' => $id_pedido,
+                'return_url' => route('paypal.success'), // URL de este proyecto (Cliente)
+                'cancel_url' => route('paypal.cancel'),  // URL de este proyecto (Cliente)
             ]);
 
             if ($response->successful()) {
@@ -73,12 +75,14 @@ class PayPalController extends Controller
                 ]);
 
             if ($response->successful() && $response->json()['status'] == 'success') {
-                $pedido = $response->json()['data'] ?? null;
+                $data = $response->json()['data'] ?? null;
+                $pedido = $data['pedido'] ?? null;
+                $paypalTransactionId = $data['paypal_transaction_id'] ?? null;
                 
                 // Limpiamos el carrito y el ID del pedido solo si el pago fue exitoso
                 session()->forget(['last_order_id', 'cart']);
                 
-                return view('cliente.pago_exitoso', compact('pedido'));
+                return view('cliente.pago_exitoso', compact('pedido', 'paypalTransactionId'));
             }
 
             Log::error('PAYPAL_CAPTURE_FAIL:', $response->json());
