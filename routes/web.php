@@ -38,6 +38,7 @@ Route::get('/payment/paypal/cancel', [PayPalController::class, 'cancel'])->name(
 
 // --- PERFIL ---
 Route::get('/perfil', [ClienteController::class, 'perfil'])->name('cliente.perfil');
+Route::get('/pedidos', [ClienteController::class, 'pedidos'])->name('cliente.pedidos');
 Route::get('/perfil/editar', [ClienteController::class, 'editarPerfil'])->name('cliente.perfil.editar');
 Route::put('/perfil/update', [ClienteController::class, 'updatePerfil'])->name('cliente.perfil.update');
 Route::get('/direccion', [ClienteController::class, 'direccion'])->name('cliente.direccion');

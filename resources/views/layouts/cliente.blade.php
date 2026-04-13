@@ -249,7 +249,7 @@
                         </a>
                         <div class="user-dropdown-content" id="userDropdown">
                             <a href="{{ route('cliente.perfil') }}">Mi Perfil</a>
-                            <a href="#">Mis Pedidos</a>
+                            <a href="{{ route('cliente.pedidos') }}">Mis Pedidos</a>
                         </div>
                     </div>
                     <form action="{{ route('logout') }}" method="POST" style="display:inline">

@@ -3,14 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Pedido;
-use App\Models\DetallePedido;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class CarritoController extends Controller
 {
     const IVA_RATE = 0.16;
     const ENVIO_COST = 200;
     const PICKUP_COST = 0;
+
+    protected $apiUrl;
+
+    public function __construct()
+    {
+        $this->apiUrl = env('API_URL', 'http://localhost:8000/api');
+    }
 
     public function index()
     {
@@ -22,7 +30,6 @@ class CarritoController extends Controller
 
     public function realizarCompra(Request $request)
     {
-        // 1. Verificar sesión (Usamos 'token' que es lo que pone AuthController)
         if (!session()->has('token')) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para comprar.');
         }
@@ -36,29 +43,11 @@ class CarritoController extends Controller
         session()->put('metodo_entrega', $metodo_entrega);
 
         $calculos = $this->calcularTotales($cart, $metodo_entrega);
-        
-        // Si es envío, podríamos pedir dirección, pero por ahora vamos directo al pago
-        // para que pruebes PayPal de una vez.
         return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
     }
 
-    // NUEVO: Recibe datos de envío y muestra pago
-    public function mostrarFormularioPago(Request $request)
-    {
-        // Guardamos datos de envío en sesión para usarlos al final
-        session(['datos_envio' => $request->all()]);
-
-        $cart = session()->get('cart', []);
-        $metodo_entrega = session()->get('metodo_entrega', 'envio');
-        $calculos = $this->calcularTotales($cart, $metodo_entrega);
-
-        return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
-    }
-
-    // Procesa el guardado final en la BD
     public function procesarPedido(Request $request)
     {
-        // 1. Verificar sesión
         if (!session()->has('token')) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión.');
         }
@@ -70,21 +59,53 @@ class CarritoController extends Controller
         $metodo_entrega = session()->get('metodo_entrega', 'pickup');
         $calculos = $this->calcularTotales($cart, $metodo_entrega);
 
-        // 2. Simular ID de pedido (Pronto lo haremos real con el Backend)
-        $pedido_id = rand(1000, 9999); 
-        session(['last_order_id' => $pedido_id]);
+        try {
+            // 1. Formateamos los items con seguridad
+            $items = [];
+            foreach ($cart as $id => $details) {
+                if (isset($details['cantidad']) && isset($details['precio'])) {
+                    $items[] = [
+                        'id' => $id,
+                        'cantidad' => $details['cantidad'],
+                        'precio' => $details['precio']
+                    ];
+                }
+            }
 
-        // 3. Si eligió PayPal, redirigir
-        if ($metodo_pago === 'paypal') {
-            return redirect()->route('paypal.payment', [
-                'monto' => $calculos['total'],
-                'id_pedido' => $pedido_id
-            ]);
+            // 2. Registro Real en el Backend
+            $response = Http::withToken(session('token'))
+                ->timeout(15)
+                ->post("{$this->apiUrl}/pedidos", [
+                    'items' => $items
+                ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $pedido_id = $data['pedido_id'] ?? null;
+
+                if ($pedido_id) {
+                    session(['last_order_id' => $pedido_id]);
+
+                    if ($metodo_pago === 'paypal') {
+                        return redirect()->route('paypal.payment', [
+                            'monto' => $calculos['total'],
+                            'id_pedido' => $pedido_id
+                        ]);
+                    }
+
+                    session()->forget(['cart', 'metodo_entrega', 'datos_envio']);
+                    return redirect()->route('catalogo')->with('success', '¡Pedido realizado con éxito!');
+                }
+            }
+
+            // Si llegamos aquí, el backend falló pero no tronó
+            $msgError = $response->json()['mensaje'] ?? 'El servidor no pudo registrar el pedido por un error técnico.';
+            return back()->with('error', $msgError);
+
+        } catch (\Exception $e) {
+            Log::error('EXCEPTION_PROCESAR_PEDIDO:', ['msg' => $e->getMessage()]);
+            return back()->with('error', 'Error de conexión con el servidor de pedidos. Por favor, intenta de nuevo.');
         }
-
-        // Si es otro método
-        session()->forget(['cart', 'metodo_entrega', 'datos_envio']);
-        return redirect()->route('catalogo')->with('success', '¡Pedido realizado con éxito!');
     }
 
     public function add(Request $request)
@@ -129,7 +150,9 @@ class CarritoController extends Controller
 
     public function calcularTotales($cart, $metodo_entrega = 'pickup')
     {
-        $subtotal = $this->calcularSubtotal($cart);
+        $subtotal = 0;
+        foreach($cart as $item) { $subtotal += $item['precio'] * $item['cantidad']; }
+        
         $iva = $subtotal * self::IVA_RATE;
         $costo_entrega = ($metodo_entrega === 'envio') ? self::ENVIO_COST : self::PICKUP_COST;
         $total = $subtotal + $iva + $costo_entrega;
@@ -144,11 +167,4 @@ class CarritoController extends Controller
             'total_formato' => '$' . number_format($total, 2) . ' MXN'
         ];
     }
-
-    private function calcularSubtotal($cart)
-    {
-        $subtotal = 0;
-        foreach($cart as $item) { $subtotal += $item['precio'] * $item['cantidad']; }
-        return $subtotal;
-    }
-} 
+}
