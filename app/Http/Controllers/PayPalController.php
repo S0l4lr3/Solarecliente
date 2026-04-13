@@ -73,9 +73,12 @@ class PayPalController extends Controller
                 ]);
 
             if ($response->successful() && $response->json()['status'] == 'success') {
+                $pedido = $response->json()['data'] ?? null;
+                
                 // Limpiamos el carrito y el ID del pedido solo si el pago fue exitoso
                 session()->forget(['last_order_id', 'cart']);
-                return view('cliente.pago_exitoso');
+                
+                return view('cliente.pago_exitoso', compact('pedido'));
             }
 
             Log::error('PAYPAL_CAPTURE_FAIL:', $response->json());

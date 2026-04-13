@@ -42,6 +42,20 @@ class ClienteController extends Controller
         return view('cliente.perfil', compact('user'));
     }
 
+    public function pedidos()
+    {
+        $token = Session::get('token');
+        if (!$token) {
+            return redirect()->route('login');
+        }
+
+        // Llamamos a la API del Backend para obtener los pedidos
+        $response = Http::withToken($token)->get("{$this->apiUrl}/mis-pedidos");
+        $pedidos = $response->successful() ? $response->json() : [];
+
+        return view('cliente.pedidos', compact('pedidos'));
+    }
+
     public function editarPerfil()
     {
         $user = Session::get('user');
