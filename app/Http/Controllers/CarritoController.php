@@ -36,8 +36,19 @@ class CarritoController extends Controller
         $cart = session()->get('cart', []);
         $id = $request->id;
 
-        // Validamos stock con el backend
-        $stockDisponible = $this->obtenerStock($id);
+        // CONSULTA MAESTRA: Obtenemos datos reales del Backend (Precio y Stock)
+        try {
+            $response = Http::get("{$this->apiUrl}/productos/{$id}");
+            if (!$response->successful()) {
+                return redirect()->back()->with('error', 'El producto no está disponible en este momento.');
+            }
+            $productoReal = $response->json();
+            $stockDisponible = $productoReal['stock'] ?? 0;
+            $precioReal = $productoReal['precio_base'] ?? 0;
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error de conexión con el almacén.');
+        }
+
         $cantidadActual = isset($cart[$id]) ? $cart[$id]['cantidad'] : 0;
 
         if ($cantidadActual + 1 > $stockDisponible) {
@@ -48,10 +59,10 @@ class CarritoController extends Controller
             $cart[$id]['cantidad']++;
         } else {
             $cart[$id] = [
-                "nombre" => $request->nombre,
+                "nombre" => $productoReal['nombre'] ?? 'Mueble Solare',
                 "cantidad" => 1,
-                "precio" => $request->precio,
-                "imagen" => $request->imagen,
+                "precio" => $precioReal, // USAMOS EL PRECIO DEL BACKEND, NO DEL FORMULARIO
+                "imagen" => $request->imagen, // La imagen la mantenemos por UX
                 "stock_max" => $stockDisponible
             ];
         }
@@ -168,7 +179,8 @@ class CarritoController extends Controller
 
     public function realizarCompra(Request $request)
     {
-        if (!session()->has('token')) {
+        $token = session('token');
+        if (!$token) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para comprar.');
         }
 
@@ -177,11 +189,22 @@ class CarritoController extends Controller
             return redirect()->route('carrito')->with('error', 'Tu carrito está vacío.');
         }
 
+        // --- NUEVA LÓGICA: CARGAR DIRECCIONES DESDE EL BACKEND ---
+        $direcciones = [];
+        try {
+            $response = Http::withToken($token)->get("{$this->apiUrl}/perfil");
+            if ($response->successful()) {
+                $direcciones = $response->json()['direcciones'] ?? [];
+            }
+        } catch (\Exception $e) {
+            Log::error("Error al cargar direcciones en checkout: " . $e->getMessage());
+        }
+
         $metodo_entrega = $request->metodo_entrega ?? session()->get('metodo_entrega', 'pickup');
         session()->put('metodo_entrega', $metodo_entrega);
 
         $calculos = $this->calcularTotales($cart, $metodo_entrega);
-        return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega'));
+        return view('cliente.formulario_pago', compact('cart', 'calculos', 'metodo_entrega', 'direcciones'));
     }
 
     public function procesarPedido(Request $request)
@@ -192,6 +215,19 @@ class CarritoController extends Controller
 
         $cart = session()->get('cart', []);
         if (empty($cart)) return redirect()->route('catalogo');
+
+        // --- VALIDACIÓN DE STOCK DE ÚLTIMO MINUTO ---
+        foreach ($cart as $id => $details) {
+            try {
+                $check = Http::get("{$this->apiUrl}/productos/{$id}");
+                if ($check->successful()) {
+                    $actual = $check->json()['stock'] ?? 0;
+                    if ($details['cantidad'] > $actual) {
+                        return back()->with('error', "Lo sentimos, el stock de '{$details['nombre']}' se agotó o cambió. Solo quedan {$actual} piezas.");
+                    }
+                }
+            } catch (\Exception $e) {}
+        }
 
         $metodo_pago = $request->metodo_pago;
         $metodo_entrega = session()->get('metodo_entrega', 'pickup');
@@ -212,7 +248,10 @@ class CarritoController extends Controller
                 ->post("{$this->apiUrl}/pedidos", [
                     'items' => $items,
                     'metodo_entrega' => $metodo_entrega,
-                    'total' => $calculos['total']
+                    'total' => $calculos['total'],
+                    'direccion_envio_id' => $request->direccion_envio_id, // Capturamos el ID de la dirección
+                    'telefono' => $request->telefono, // Capturamos el teléfono
+                    'notas' => $request->notas // Capturamos las notas
                 ]);
 
             if ($response->successful()) {
@@ -220,11 +259,13 @@ class CarritoController extends Controller
                 $pedido_id = $data['pedido_id'] ?? null;
 
                 if ($pedido_id) {
-                    session(['last_order_id' => $pedido_id, 'monto_pedido' => $calculos['total']]);
+                    // --- CORRECCIÓN FINANCIERA: ENVIAR EL TOTAL REAL (CON IVA Y ENVÍO) ---
+                    $montoFinal = $calculos['total']; 
+                    session(['last_order_id' => $pedido_id, 'monto_pedido' => $montoFinal]);
 
                     if ($metodo_pago === 'paypal') {
                         return redirect()->route('paypal.payment', [
-                            'monto' => $calculos['total'],
+                            'monto' => $montoFinal,
                             'id_pedido' => $pedido_id
                         ]);
                     }

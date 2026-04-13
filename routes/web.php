@@ -39,13 +39,14 @@ Route::get('/payment/paypal/success', [PayPalController::class, 'success'])->nam
 Route::get('/payment/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
 
 // --- PERFIL ---
-Route::get('/perfil', [ClienteController::class, 'perfil'])->name('cliente.perfil');
+Route::get('/perfil', [ClienteController::class, 'profile'])->name('cliente.perfil');
 Route::get('/pedidos', [ClienteController::class, 'pedidos'])->name('cliente.pedidos');
+Route::post('/pedidos/{id}/cancelar', [ClienteController::class, 'cancelarPedido'])->name('cliente.pedidos.cancelar');
 Route::get('/perfil/editar', [ClienteController::class, 'editarPerfil'])->name('cliente.perfil.editar');
 Route::put('/perfil/update', [ClienteController::class, 'updatePerfil'])->name('cliente.perfil.update');
 Route::get('/direccion', [ClienteController::class, 'direccion'])->name('cliente.direccion');
-Route::get('/direccion/editar', [ClienteController::class, 'editarDireccion'])->name('cliente.direccion.editar');
-Route::put('/direccion/update', [ClienteController::class, 'updateDireccion'])->name('cliente.direccion.update');
+Route::post('/direccion', [ClienteController::class, 'updateDireccion'])->name('cliente.direccion.update');
+Route::delete('/direccion/{id}', [ClienteController::class, 'eliminarDireccion'])->name('cliente.direccion.eliminar');
 
 // PDF
 Route::get('/aviso-privacidaad/descargar', [ClienteController::class, 'descargarAvisoPrivacidad'])->name('aviso.descargar');

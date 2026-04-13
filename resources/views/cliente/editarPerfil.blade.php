@@ -66,6 +66,18 @@
                         <input type="email" name="correo" value="{{ old('correo', $user['correo'] ?? '') }}" 
                                style="width: 100%; padding: 15px; border: 1px solid var(--color-sand-beige); font-size: 18px; outline: none; background: #fafafa;" required>
                     </div>
+
+                    <div style="margin-bottom: 2.5rem;">
+                        <label style="display: block; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 1rem; color: #999;">Teléfono de Contacto</label>
+                        <input type="tel" name="telefono" value="{{ old('telefono', $user['telefono'] ?? '') }}" 
+                               style="width: 100%; padding: 15px; border: 1px solid var(--color-sand-beige); font-size: 18px; outline: none; background: #ffffff;">
+                    </div>
+
+                    <div style="margin-bottom: 2.5rem;">
+                        <label style="display: block; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 1rem; color: #999;">Identificación Fiscal (RFC)</label>
+                        <input type="text" name="rfc" value="{{ old('rfc', $user['rfc'] ?? '') }}" 
+                               style="width: 100%; padding: 15px; border: 1px solid var(--color-sand-beige); font-size: 18px; outline: none; background: #ffffff; text-transform: uppercase;">
+                    </div>
                 </div>
 
                 {{-- Columna 2: Seguridad --}}

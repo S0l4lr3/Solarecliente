@@ -39,15 +39,13 @@
 
         <div class="product-grid">
             @forelse($muebles as $mueble)
-                <div class="product-card">
+                <div class="product-card" onclick="window.location.href='/producto/{{ $mueble['id'] }}'" style="cursor: pointer;">
                     @php 
-                        $imagenUrl = 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?fm=webp'; 
-                        if(!empty($mueble['imagenes'])) {
-                            $imagenUrl = $mueble['imagenes'][0]['url'] ?? $imagenUrl;
-                        }
+                        // Prioridad: 1. full_image_url del backend, 2. Imagen genérica elegante
+                        $imagenUrl = $mueble['full_image_url'] ?? 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?fm=webp'; 
                     @endphp
                     <div style="overflow: hidden; background-color: #f9f9f9;">
-                        <img src="{{ $imagenUrl }}" alt="{{ $mueble['nombre'] }}" class="product-img" style="height: 350px;">
+                        <img src="{{ $imagenUrl }}" alt="{{ $mueble['nombre'] }}" class="product-img" style="height: 350px; width: 100%; object-fit: cover;">
                     </div>
                     <div class="product-body">
                         <div class="product-collection">SOLARE EXTERIOR</div>

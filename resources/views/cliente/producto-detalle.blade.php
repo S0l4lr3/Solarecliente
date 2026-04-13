@@ -55,9 +55,23 @@
                     {{ $mueble['nombre'] }}
                 </h1>
 
-                <p style="font-size: 1.5rem; color: #333; font-weight: 600; margin-bottom: 3rem;">
+                <p style="font-size: 1.5rem; color: #333; font-weight: 600; margin-bottom: 1.5rem;">
                     ${{ number_format($mueble['precio_base'], 2) }} MXN
                 </p>
+
+                {{-- INDICADOR DE STOCK --}}
+                <div style="margin-bottom: 2.5rem; display: flex; align-items: center; gap: 10px;">
+                    @if(($mueble['stock_real'] ?? 0) > 5)
+                        <span style="width: 8px; height: 8px; background: #48bb78; border-radius: 50%;"></span>
+                        <span style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #2f855a; letter-spacing: 1px;">Disponibilidad Inmediata</span>
+                    @elseif(($mueble['stock_real'] ?? 0) > 0)
+                        <span style="width: 8px; height: 8px; background: #ed8936; border-radius: 50%;"></span>
+                        <span style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #c05621; letter-spacing: 1px;">Últimas {{ $mueble['stock_real'] }} piezas en almacén</span>
+                    @else
+                        <span style="width: 8px; height: 8px; background: #e53e3e; border-radius: 50%;"></span>
+                        <span style="font-size: 11px; font-weight: bold; text-transform: uppercase; color: #c53030; letter-spacing: 1px;">Sin existencias por el momento</span>
+                    @endif
+                </div>
 
                 <div style="border-top: 1px solid #edebe8; padding-top: 2rem; margin-bottom: 3rem;">
                     <h4
@@ -68,19 +82,18 @@
                     </p>
                 </div>
 
-                <div style="display: flex; gap: 1.5rem;">
-                    <form action="{{ route('carrito.add') }}" method="POST" style="flex: 1;">
+                <div style="display: flex; gap: 1.5rem; width: 100%;">
+                    <form action="{{ route('carrito.add') }}" method="POST" style="flex: 1; width: 100%;">
                         @csrf
                         <input type="hidden" name="id" value="{{ $mueble['id'] }}">
                         <input type="hidden" name="nombre" value="{{ $mueble['nombre'] }}">
                         <input type="hidden" name="precio" value="{{ $mueble['precio_base'] }}">
                         <input type="hidden" name="imagen" value="{{ $imagenUrl }}">
                         <button type="submit" class="btn btn-primary"
-                            style="width: 100%; padding: 20px; font-size: 11px; letter-spacing: 2px;">
+                            style="width: 100%; padding: 22px; font-size: 13px; letter-spacing: 3px; font-weight: 700; text-transform: uppercase;">
                             AÑADIR AL CARRITO
                         </button>
                     </form>
-                    <button class="btn btn-outline" style="padding: 20px 25px;">♡</button>
                 </div>
 
                 <div style="margin-top: 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">

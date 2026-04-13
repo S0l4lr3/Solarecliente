@@ -19,7 +19,14 @@ class CatalogoController extends Controller
     public function home()
     {
         $response = Http::get($this->apiUrl . '/productos');
-        $muebles = $response->successful() ? array_slice($response->json(), 0, 4) : [];
+        
+        $muebles = [];
+        if ($response->successful()) {
+            $data = $response->json();
+            // Extraemos los productos de la llave 'data' (formato paginado de Laravel)
+            $listaProductos = $data['data'] ?? [];
+            $muebles = array_slice($listaProductos, 0, 4);
+        }
         
         return view('cliente.home', compact('muebles'));
     }
@@ -31,19 +38,20 @@ class CatalogoController extends Controller
     {
         $search = $request->query('search');
         $categoria_id = $request->query('categoria_id', 'TODOS');
+        $page = $request->query('page', 1);
 
-        $params = [];
+        $params = ['page' => $page];
         if ($search) $params['search'] = $search;
         if ($categoria_id !== 'TODOS' && $categoria_id !== null) $params['categoria_id'] = $categoria_id;
 
         $responseProductos = Http::get($this->apiUrl . '/productos', $params);
         $responseCategorias = Http::get($this->apiUrl . '/categorias');
 
-        // El backend devuelve un ARRAY directo de productos
-        $muebles = $responseProductos->successful() ? $responseProductos->json() : [];
+        // El backend ahora devuelve un objeto de paginación
+        $paginacion = $responseProductos->successful() ? $responseProductos->json() : ['data' => []];
+        $muebles = $paginacion['data'] ?? [];
         $categorias = $responseCategorias->successful() ? $responseCategorias->json() : [];
 
-        // 4. Enviamos a la vista. La vista debe usar 'full_image_url' que viene del backend.
-        return view('cliente.catalogo', compact('muebles', 'categorias', 'categoria_id', 'search'));
+        return view('cliente.catalogo', compact('muebles', 'categorias', 'categoria_id', 'search', 'paginacion'));
     }
 }

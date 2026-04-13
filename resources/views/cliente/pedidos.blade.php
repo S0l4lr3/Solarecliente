@@ -55,7 +55,19 @@
                                     </span>
                                 </td>
                                 <td style="padding: 30px 10px; text-align: right; font-size: 22px; font-weight: 700; color: #333;">
-                                    ${{ number_format($pedido['total_pedido'] ?? $pedido->detalles->sum(function($d){ return $d->cantidad * $d->precio_unitario; }), 2) }}
+                                    ${{ number_format($pedido['total'] ?? 0, 2) }}
+                                    
+                                    {{-- Botón de Cancelación --}}
+                                    @if($pedido['estado_envio'] == 'procesando')
+                                        <div style="margin-top: 15px;">
+                                            <form action="{{ route('cliente.pedidos.cancelar', $pedido['id']) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar este pedido? El stock será devuelto al almacén.');">
+                                                @csrf
+                                                <button type="submit" style="background: none; border: 1px solid #e53e3e; color: #e53e3e; padding: 5px 15px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#e53e3e'; this.style.color='#fff';" onmouseout="this.style.background='none'; this.style.color='#e53e3e';">
+                                                    Cancelar Pedido
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

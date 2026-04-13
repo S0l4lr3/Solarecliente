@@ -148,6 +148,7 @@
                                 style="text-decoration: none; color: inherit;">
                                 <div style="overflow: hidden; background-color: #f9f9f9;">
                                     <img src="{{ $imagenUrl }}" alt="{{ $mueble['nombre'] }}" class="product-img"
+                                        loading="lazy"
                                         style="transition: transform 0.6s ease;">
                                 </div>
                             </a>
@@ -185,6 +186,29 @@
                         </div>
                     @endforelse
                 </div>
+
+                {{-- PAGINACIÓN --}}
+                @if(isset($paginacion) && ($paginacion['last_page'] ?? 1) > 1)
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 2rem; margin-top: 4rem; border-top: 1px solid #edebe8; padding-top: 2rem;">
+                        @if($paginacion['current_page'] > 1)
+                            <a href="{{ route('catalogo', array_merge(request()->all(), ['page' => $paginacion['current_page'] - 1])) }}" 
+                               style="font-size: 10px; font-weight: bold; text-decoration: none; color: #333; letter-spacing: 2px; text-transform: uppercase;">
+                                ← Anterior
+                            </a>
+                        @endif
+
+                        <span style="font-size: 11px; color: #999; letter-spacing: 1px; text-transform: uppercase;">
+                            Página {{ $paginacion['current_page'] }} de {{ $paginacion['last_page'] }}
+                        </span>
+
+                        @if($paginacion['current_page'] < $paginacion['last_page'])
+                            <a href="{{ route('catalogo', array_merge(request()->all(), ['page' => $paginacion['current_page'] + 1])) }}" 
+                               style="font-size: 10px; font-weight: bold; text-decoration: none; color: #333; letter-spacing: 2px; text-transform: uppercase;">
+                                Siguiente →
+                            </a>
+                        @endif
+                    </div>
+                @endif
             </section>
         </div>
     </div>

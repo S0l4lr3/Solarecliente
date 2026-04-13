@@ -37,9 +37,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $totalCalculado = 0; @endphp
                         @foreach($pedido['detalles'] as $item)
-                            @php $subtotal = $item['cantidad'] * $item['precio_unitario']; $totalCalculado += $subtotal; @endphp
                             <tr style="border-bottom: 1px solid #eee;">
                                 <td style="padding: 20px 0;">
                                     <span style="display: block; font-size: 18px; font-weight: 600; color: #333;">{{ $item['variante']['producto']['nombre'] ?? 'Producto' }}</span>
@@ -56,8 +54,8 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="2" style="padding-top: 2rem; font-size: 20px; font-weight: 700; color: var(--color-dark-moss);">Total Pagado</td>
-                            <td style="padding-top: 2rem; text-align: right; font-size: 28px; font-weight: 700; color: var(--color-clay-brown);">${{ number_format($totalCalculado, 2) }}</td>
+                            <td colspan="2" style="padding-top: 2rem; font-size: 18px; font-weight: 500; color: #999; text-align: right;">Total Pagado (IVA y Envío inc.)</td>
+                            <td style="padding-top: 2rem; text-align: right; font-size: 28px; font-weight: 700; color: var(--color-clay-brown);">${{ number_format($totalPagado, 2) }}</td>
                         </tr>
                     </tfoot>
                 </table>

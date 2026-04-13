@@ -12,8 +12,10 @@ class ProductoController extends Controller
      */
     public function show($id)
     {
-        // 1. Petición al Nodo Central por el mueble específico
-        $response = Http::get(env('API_URL') . "/productos/{$id}");
+        $apiUrl = env('API_URL', 'http://127.0.0.1:8000/api');
+        $urlCompleta = "{$apiUrl}/productos/{$id}";
+        
+        $response = Http::get($urlCompleta);
 
         if ($response->successful()) {
             $mueble = $response->json();

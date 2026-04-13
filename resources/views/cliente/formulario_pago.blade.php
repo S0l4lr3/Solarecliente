@@ -64,12 +64,96 @@
                 </div>
 
                 {{-- Notas --}}
-                <div style="background-color: #f9f9f9; padding: 2rem; border-radius: 4px;">
+                <div style="background-color: #f9f9f9; padding: 2rem; border-radius: 4px; margin-bottom: 2rem;">
                     <h3 class="serif" style="font-size: 1.2rem; margin-bottom: 1.5rem;">Notas adicionales</h3>
                     <textarea name="notas" rows="4" style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px;" placeholder="¿Algo que debamos saber? (opcional)"></textarea>
                 </div>
+
+                {{-- Dirección de Envío (Solo si es entrega a domicilio) --}}
+                @if(session('metodo_entrega') === 'envio')
+                <div style="background-color: #fcfaf7; padding: 2rem; border-radius: 4px; border: 1px solid #95817433;">
+                    <h3 class="serif" style="font-size: 1.2rem; margin-bottom: 1.5rem; color: #958174;">Dirección de Envío</h3>
+                    
+                    {{-- SELECTOR DE DIRECCIONES GUARDADAS --}}
+                    @if(count($direcciones) > 0)
+                    <div style="margin-bottom: 2rem; padding: 1.5rem; background: #fff; border: 1px solid #95817455; border-radius: 4px;">
+                        <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; color: #958174;">Usar una dirección guardada</label>
+                        <input type="hidden" name="direccion_envio_id" id="direccion_envio_id">
+                        <select id="selectorDireccion" style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px; background: white; cursor: pointer;">
+                            <option value="">-- Seleccionar dirección --</option>
+                            @foreach($direcciones as $dir)
+                                <option value="{{ $dir['id'] }}" 
+                                        data-calle="{{ $dir['calle'] }} {{ $dir['numero_exterior'] }}"
+                                        data-colonia="{{ $dir['colonia'] }}"
+                                        data-cp="{{ $dir['codigo_postal'] }}"
+                                        data-ciudad="{{ $dir['ciudad'] }}"
+                                        data-estado="{{ $dir['estado'] }}">
+                                    {{ $dir['alias'] }} ({{ $dir['calle'] }} #{{ $dir['numero_exterior'] }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; color: #958174;">Calle y Número *</label>
+                        <input type="text" name="direccion" id="campo_direccion" required placeholder="Ej. Av. Vallarta 123 Int 4"
+                               style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; color: #958174;">Colonia / Fraccionamiento *</label>
+                            <input type="text" name="colonia" id="campo_colonia" required
+                                   style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; color: #958174;">Código Postal *</label>
+                            <input type="text" name="cp" id="campo_cp" required maxlength="5"
+                                   style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; color: #958174;">Ciudad *</label>
+                            <input type="text" name="ciudad" id="campo_ciudad" required
+                                   style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; color: #958174;">Estado *</label>
+                            <select name="estado" id="campo_estado" required style="width: 100%; padding: 12px; border: 1px solid #edebe8; border-radius: 4px; background: white;">
+                                <option value="Jalisco">Jalisco</option>
+                                <option value="Ciudad de México">Ciudad de México</option>
+                                <option value="Nuevo León">Nuevo León</option>
+                                <option value="México">México</option>
+                                <option value="OTRO">Otro Estado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </form>
         </div>
+
+        <script>
+            // Lógica para auto-completar dirección
+            document.getElementById('selectorDireccion')?.addEventListener('change', function() {
+                const selected = this.options[this.selectedIndex];
+                const hiddenInput = document.getElementById('direccion_envio_id');
+                
+                if(selected.value !== "") {
+                    hiddenInput.value = selected.value; // Asignamos el ID
+                    document.getElementById('campo_direccion').value = selected.getAttribute('data-calle');
+                    document.getElementById('campo_colonia').value = selected.getAttribute('data-colonia');
+                    document.getElementById('campo_cp').value = selected.getAttribute('data-cp');
+                    document.getElementById('campo_ciudad').value = selected.getAttribute('data-ciudad');
+                    document.getElementById('campo_estado').value = selected.getAttribute('data-estado');
+                } else {
+                    hiddenInput.value = ""; // Limpiamos el ID si se elige la opción vacía
+                }
+            });
+        </script>
 
         {{-- Resumen del pedido --}}
         <div style="background-color: #f9f9f9; padding: 2.5rem; border-radius: 4px; height: fit-content; position: sticky; top: 20px;">
@@ -140,19 +224,33 @@ document.getElementById('formularioPago').addEventListener('submit', function(e)
 
     if (!nombre || !email || !telefono) {
         e.preventDefault();
-        alert('Todos los campos son obligatorios');
+        alert('Por favor, completa tus datos de contacto.');
         return false;
+    }
+
+    // Validación de Dirección (Si el bloque existe en el DOM)
+    let direccionInput = document.querySelector('input[name="direccion"]');
+    if (direccionInput) {
+        let cp = document.getElementById('cp').value;
+        let colonia = document.querySelector('input[name="colonia"]').value;
+        let ciudad = document.querySelector('input[name="ciudad"]').value;
+
+        if (!direccionInput.value || !cp || !colonia || !ciudad) {
+            e.preventDefault();
+            alert('La dirección de envío es obligatoria para la entrega a domicilio.');
+            return false;
+        }
+
+        if (cp.length < 5) {
+            e.preventDefault();
+            alert('El Código Postal debe tener 5 dígitos.');
+            return false;
+        }
     }
 
     if (!metodo_pago) {
         e.preventDefault();
         alert('Selecciona un método de pago');
-        return false;
-    }
-
-    if (telefono.length < 10) {
-        e.preventDefault();
-        alert('El teléfono debe tener 10 dígitos');
         return false;
     }
 });

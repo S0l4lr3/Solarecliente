@@ -60,6 +60,40 @@
             letter-spacing: 6px;
         }
 
+        /* BARRA DE BÚSQUEDA NAV */
+        .nav-search {
+            position: relative;
+            width: 300px;
+            margin: 0 2rem;
+        }
+
+        .nav-search input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid var(--color-sand-beige);
+            border-radius: 30px;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s;
+            background-color: #fcfaf9;
+        }
+
+        .nav-search input:focus {
+            border-color: var(--color-clay-brown);
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-search .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-clay-brown);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
         .nav-menu {
             display: flex;
             gap: 3.5rem; /* Espaciado amplio como la imagen */
@@ -223,10 +257,35 @@
 </head>
 <body>
     <header class="header">
+        {{-- ALERTA FLOTANTE (Toast) --}}
+        @if(session('success'))
+            <div id="toast-success" style="position: fixed; top: 100px; right: 20px; background: #50594e; color: white; padding: 15px 30px; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 2000; font-size: 12px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.5s ease-out;">
+                <span>✓</span> {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => {
+                    const toast = document.getElementById('toast-success');
+                    if(toast) toast.style.opacity = '0';
+                    setTimeout(() => toast?.remove(), 500);
+                }, 3000);
+            </script>
+            <style>
+                @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+            </style>
+        @endif
+
         <div class="container nav-bar">
             <a href="/" class="logo serif">SOLARE</a>
+
+            {{-- BARRA DE BÚSQUEDA INTEGRADA --}}
+            <form action="{{ route('catalogo') }}" method="GET" class="nav-search">
+                <span class="search-icon">⌕</span>
+                <input type="text" name="search" placeholder="Busca tu mueble ideal..." value="{{ request('search') }}">
+            </form>
+
             <nav class="nav-menu">
                 <a href="/" class="nav-link">Inicio</a>
+                <a href="{{ route('catalogo') }}" class="nav-link">Colección</a>
                 
                 <a href="/carrito" class="nav-link" style="position: relative;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 38px; height: 38px;">
