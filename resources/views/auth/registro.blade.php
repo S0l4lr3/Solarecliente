@@ -73,6 +73,14 @@
                     <input type="password" name="contrasena_confirmation" required class="w-full bg-[#f3f1ef] border-b border-gray-300 focus:border-solare-arcilla border-x-0 border-t-0 text-sm p-3 outline-none transition" placeholder="Repite tu contraseña">
                 </div>
 
+                {{-- Aviso de Privacidad --}}
+                <div class="flex items-start gap-3 py-2">
+                    <input type="checkbox" name="aviso_privacidad" id="aviso_privacidad" required class="mt-1 w-4 h-4 text-solare-arcilla border-gray-300 rounded focus:ring-solare-arcilla cursor-pointer">
+                    <label for="aviso_privacidad" class="text-[10px] text-gray-500 leading-relaxed cursor-pointer">
+                        He leído y acepto el <a href="{{ route('aviso.privacidad') }}" target="_blank" class="text-solare-arcilla font-bold hover:underline">Aviso de Privacidad</a> de Solare Muebles. *
+                    </label>
+                </div>
+
                 <div class="pt-4">
                     <button type="submit" class="w-full bg-solare-arcilla text-white py-4 text-[11px] font-bold uppercase tracking-widest hover:bg-solare-musgo transition flex items-center justify-center gap-2">
                         REGÍSTRATE <span class="text-lg">→</span>

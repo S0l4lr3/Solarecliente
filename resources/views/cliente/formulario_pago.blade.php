@@ -199,13 +199,6 @@
                 </div>
             </div>
 
-            <div style="margin-top: 1.5rem; padding: 1rem; background: #fff; border: 1px solid #edebe8; border-radius: 4px;">
-                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 12px; color: #666; line-height: 1.4;">
-                    <input type="checkbox" name="aviso_privacidad" id="aviso_privacidad" required style="margin-top: 3px; cursor: pointer;">
-                    <span>He leído y acepto el <a href="{{ route('aviso.privacidad') }}" target="_blank" style="color: #000; font-weight: bold; text-decoration: underline;">Aviso de Privacidad</a> de Solare Muebles. *</span>
-                </label>
-            </div>
-
             <button type="submit" form="formularioPago" style="width: 100%; padding: 20px; font-size: 11px; letter-spacing: 2px; background-color: #000; color: white; border: none; cursor: pointer; text-transform: uppercase; font-weight: bold; margin-top: 1rem;">
                 CONFIRMAR PEDIDO 
             </button>
@@ -258,14 +251,6 @@ document.getElementById('formularioPago').addEventListener('submit', function(e)
     if (!metodo_pago) {
         e.preventDefault();
         alert('Selecciona un método de pago');
-        return false;
-    }
-
-    // Validación Aviso de Privacidad
-    let avisoPrivacidad = document.getElementById('aviso_privacidad');
-    if (!avisoPrivacidad.checked) {
-        e.preventDefault();
-        alert('Debes aceptar el aviso de privacidad para continuar con el pedido.');
         return false;
     }
 });
