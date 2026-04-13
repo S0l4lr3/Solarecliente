@@ -10,12 +10,9 @@ class CatalogoController extends Controller
     protected $apiUrl;
     public function __construct()
     {
-        $this->apiUrl = env('API_URL', 'http://localhost:8000/api');  
+        $this->apiUrl = rtrim(env('API_URL', 'http://127.0.0.1:8000/api'), '/');  
     }
 
-    // esto va en tods cos controller del front mas la funcion de home  
-
-    //backend puerto 8000 y los otros donde sea  
     /**
      * Muestra la página de inicio con productos destacados.
      */
@@ -23,38 +20,30 @@ class CatalogoController extends Controller
     {
         $response = Http::get($this->apiUrl . '/productos');
         $muebles = $response->successful() ? array_slice($response->json(), 0, 4) : [];
+        
         return view('cliente.home', compact('muebles'));
     }
 
     /**
-     * Muestra el catálogo de muebles con filtros funcionales y URL de Railway.
+     * Muestra el catálogo de muebles con filtros funcionales.
      */
     public function index(Request $request)
     {
-        // 1. Capturamos los valores de la URL
         $search = $request->query('search');
         $categoria_id = $request->query('categoria_id', 'TODOS');
 
-        // 2. Preparamos los parámetros para la API del Backend
         $params = [];
-        
-        if ($search) {
-            $params['search'] = $search;
-        }
+        if ($search) $params['search'] = $search;
+        if ($categoria_id !== 'TODOS' && $categoria_id !== null) $params['categoria_id'] = $categoria_id;
 
-        // Si es 'TODOS', no enviamos el filtro para que el backend traiga todo
-        if ($categoria_id !== 'TODOS' && $categoria_id !== null) {
-            $params['categoria_id'] = $categoria_id;
-        }
-
-        // 3. Petición al Backend en Railway
         $responseProductos = Http::get($this->apiUrl . '/productos', $params);
         $responseCategorias = Http::get($this->apiUrl . '/categorias');
 
+        // El backend devuelve un ARRAY directo de productos
         $muebles = $responseProductos->successful() ? $responseProductos->json() : [];
         $categorias = $responseCategorias->successful() ? $responseCategorias->json() : [];
 
-        // 4. Enviamos a la vista con todas las variables necesarias
+        // 4. Enviamos a la vista. La vista debe usar 'full_image_url' que viene del backend.
         return view('cliente.catalogo', compact('muebles', 'categorias', 'categoria_id', 'search'));
     }
 }

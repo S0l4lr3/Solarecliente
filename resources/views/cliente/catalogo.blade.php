@@ -141,7 +141,6 @@
                     @forelse($muebles as $mueble)
                         <div class="product-card">
                             @php
-                                // Prioridad 1: Imagen real del backend. Prioridad 2: Fallback elegante.
                                 $imagenUrl = $mueble['full_image_url'] ?? 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?fm=webp';
                             @endphp
                             {{-- @dd($mueble) --}}
