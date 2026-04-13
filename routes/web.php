@@ -49,4 +49,4 @@ Route::post('/direccion', [ClienteController::class, 'updateDireccion'])->name('
 Route::delete('/direccion/{id}', [ClienteController::class, 'eliminarDireccion'])->name('cliente.direccion.eliminar');
 
 // PDF
-Route::get('/aviso-privacidaad/descargar', [ClienteController::class, 'descargarAvisoPrivacidad'])->name('aviso.descargar');
+Route::get('/aviso-privacidad/descargar', [ClienteController::class, 'descargarAvisoPrivacidad'])->name('aviso.descargar');

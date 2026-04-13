@@ -112,4 +112,10 @@ class ClienteController extends Controller
             return back()->with('error', 'Error de conexión al intentar cancelar.');
         }
     }
+
+    public function descargarAvisoPrivacidad()
+    {
+        $pdf = Pdf::loadView('pdf.aviso-privacidad');
+        return $pdf->download('aviso-de-privacidad-solare.pdf');
+    }
 }
