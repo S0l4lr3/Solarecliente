@@ -17,6 +17,8 @@ Route::view('/aviso-privacidad', 'aviso-privacidad')->name('aviso.privacidad');
 // --- CARRITO ---
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito');
 Route::post('/carrito/add', [CarritoController::class, 'add'])->name('carrito.add');
+Route::post('/carrito/increment', [CarritoController::class, 'increment'])->name('carrito.increment');
+Route::post('/carrito/decrement', [CarritoController::class, 'decrement'])->name('carrito.decrement');
 Route::post('/carrito/remove', [CarritoController::class, 'remove'])->name('carrito.remove');
 Route::post('/carrito/update-metodo-entrega', [CarritoController::class, 'updateMetodoEntrega'])->name('carrito.update-metodo-entrega');
 
